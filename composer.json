@@ -1,14 +1,27 @@
 {
-    "name": "digitalrevolution/skeleton",
-    "description": "Digital Revolution skeleton package",
-    "type": "library",
+    "name": "digitalrevolution/SymfonyRequestValidation",
+    "description": "Automatic request validation for symfony",
+    "type": "symfony-bundle",
     "license": "MIT",
     "minimum-stability": "stable",
+    "autoload": {
+        "psr-4": {
+            "DigitalRevolution\\SymfonyRequestValidation\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "DigitalRevolution\\SymfonyRequestValidation\\Tests\\": "tests/"
+        }
+    },
+    "suggest": {
+        "digitalrevolution/SymfonyValidationShorthand": "Simplifies writing validation rules by providing a shorthand notation"
+    },
     "require": {
-        "php": "7.0.* || 7.1.* || 7.2.* || 7.3.*"
+        "php": "7.1.* || 7.2.* || 7.3.*"
     },
     "require-dev": {
-        "phpunit/phpunit": "6.5.*"
+        "phpunit/phpunit": "7.5.*"
     },
     "scripts": {
         "test": "phpunit"
