@@ -1,5 +1,5 @@
 {
-    "name": "digitalrevolution/SymfonyRequestValidation",
+    "name": "digitalrevolution/symfony-request-validation",
     "description": "Automatic request validation for symfony",
     "type": "symfony-bundle",
     "license": "MIT",
@@ -15,7 +15,7 @@
         }
     },
     "suggest": {
-        "digitalrevolution/SymfonyValidationShorthand": "Simplifies writing validation rules by providing a shorthand notation"
+        "digitalrevolution/symfony-validation-shorthand": "Simplifies writing validation rules by providing a shorthand notation"
     },
     "require": {
         "php": "7.1.* || 7.2.* || 7.3.*"
