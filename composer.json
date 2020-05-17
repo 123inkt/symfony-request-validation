@@ -18,12 +18,24 @@
         "digitalrevolution/symfony-validation-shorthand": "Simplifies writing validation rules by providing a shorthand notation"
     },
     "require": {
-        "php": "7.1.* || 7.2.* || 7.3.*"
+        "php": "7.1.* || 7.2.* || 7.3.*",
+        "symfony/http-foundation": "^4.2 || 5.*",
+        "digitalrevolution/symfony-validation-shorthand": "@dev"
     },
     "require-dev": {
+        "roave/security-advisories": "dev-master",
         "phpunit/phpunit": "7.5.*"
     },
     "scripts": {
         "test": "phpunit"
+    },
+    "repositories": {
+        "digitalrevolution/symfony-validation-shorthand": {
+            "type": "path",
+            "url": "../SymfonyValidationShorthand",
+            "options": {
+                "symlink": true
+            }
+        }
     }
 }
