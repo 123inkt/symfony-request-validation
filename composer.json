@@ -14,9 +14,6 @@
             "DigitalRevolution\\SymfonyRequestValidation\\Tests\\": "tests/"
         }
     },
-    "suggest": {
-        "digitalrevolution/symfony-validation-shorthand": "Simplifies writing validation rules by providing a shorthand notation"
-    },
     "require": {
         "php": "7.1.* || 7.2.* || 7.3.*",
         "symfony/http-foundation": "^4.2 || 5.*",

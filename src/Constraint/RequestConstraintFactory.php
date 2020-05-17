@@ -12,9 +12,9 @@ class RequestConstraintFactory
     /** @var ConstraintFactory */
     private $factory;
 
-    public function __construct(ConstraintFactory $factory)
+    public function __construct(ConstraintFactory $factory = null)
     {
-        $this->factory = $factory;
+        $this->factory = $factory ?? new ConstraintFactory();
     }
 
     /**
