@@ -3,7 +3,6 @@ declare(strict_types=1);
 
 namespace DigitalRevolution\SymfonyRequestValidation;
 
-use DigitalRevolution\SymfonyRequestValidation\Constraint\RequestConstraint;
 use DigitalRevolution\SymfonyRequestValidation\Constraint\RequestConstraintFactory;
 use DigitalRevolution\SymfonyValidationShorthand\ConstraintFactory;
 use DigitalRevolution\SymfonyValidationShorthand\Rule\InvalidRuleException;
