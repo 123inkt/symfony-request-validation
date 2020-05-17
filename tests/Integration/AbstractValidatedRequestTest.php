@@ -46,6 +46,33 @@ class AbstractValidatedRequestTest extends TestCase
         static::assertTrue($request->isValid());
     }
 
+    /**
+     * @dataProvider dataProvider
+     * @param array<string, mixed> $data
+     * @param Collection|array<string, string|Constraint|array<string|Constraint>>|null $rules
+     * @throws InvalidRequestException|InvalidRuleException
+     */
+    public function testPostRequestValidation(array $data, $rules, bool $isValid): void
+    {
+        $request = new Request([], $data);
+        $stack   = new RequestStack();
+        $stack->push($request);
+
+        $validator       = Validation::createValidator();
+        $validationRules = new ValidationRules(['request' => $rules]);
+
+        // expect exception
+        if ($isValid === false) {
+            $this->expectException(InvalidRequestException::class);
+            new MockValidatedRequest($stack, $validator, $validationRules);
+        }
+
+        // expect success
+        $request = new MockValidatedRequest($stack, $validator, $validationRules);
+        static::assertTrue($request->isValid());
+    }
+
+
     public function dataProvider(): Generator
     {
         // test required fields
