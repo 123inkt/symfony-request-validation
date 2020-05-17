@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace DigitalRevolution\SymfonyRequestValidation;
 
 use DigitalRevolution\SymfonyRequestValidation\Constraint\RequestConstraintFactory;
+use DigitalRevolution\SymfonyRequestValidation\Renderer\ViolationListRenderer;
 use DigitalRevolution\SymfonyValidationShorthand\ConstraintFactory;
 use DigitalRevolution\SymfonyValidationShorthand\Rule\InvalidRuleException;
 use Symfony\Component\HttpFoundation\Request;
@@ -68,12 +69,8 @@ abstract class AbstractValidatedRequest
      */
     protected function handleViolations(ConstraintViolationListInterface $violationList): void
     {
-        $messages = [];
-        foreach ($violationList as $violation) {
-            $messages[] = $violation->getMessage();
-        }
-
-        throw new InvalidRequestException(implode("\n", $messages));
+        $renderer = new ViolationListRenderer($violationList);
+        throw new InvalidRequestException($renderer->render());
     }
 
     /**
