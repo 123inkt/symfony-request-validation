@@ -18,7 +18,7 @@
         "php": "7.1.* || 7.2.* || 7.3.*",
         "symfony/http-foundation": "^4.2 || 5.*",
         "symfony/validator": "^4.3 || 5.*",
-        "digitalrevolution/symfony-validation-shorthand": "@dev"
+        "digitalrevolution/symfony-validation-shorthand": "1.0.0"
     },
     "require-dev": {
         "roave/security-advisories": "dev-master",
@@ -26,14 +26,5 @@
     },
     "scripts": {
         "test": "phpunit"
-    },
-    "repositories": {
-        "digitalrevolution/symfony-validation-shorthand": {
-            "type": "path",
-            "url": "../SymfonyValidationShorthand",
-            "options": {
-                "symlink": true
-            }
-        }
     }
 }
