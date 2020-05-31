@@ -9,7 +9,6 @@
          beStrictAboutOutputDuringTests="true"
          beStrictAboutResourceUsageDuringSmallTests="true"
          beStrictAboutTodoAnnotatedTests="true"
-         beStrictAboutCoversAnnotation="true"
          executionOrder="defects"
 >
     <testsuites>
