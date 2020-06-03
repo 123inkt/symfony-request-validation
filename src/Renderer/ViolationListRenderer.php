@@ -9,9 +9,12 @@ use Symfony\Component\Validator\ConstraintViolationListInterface;
 
 class ViolationListRenderer
 {
-    /** @var ConstraintViolationListInterface */
+    /** @var ConstraintViolationListInterface<ConstraintViolationInterface> */
     private $violationList;
 
+    /**
+     * @param ConstraintViolationListInterface<ConstraintViolationInterface> $violations
+     */
     public function __construct(ConstraintViolationListInterface $violations)
     {
         $this->violationList = $violations;
