@@ -22,9 +22,23 @@
     },
     "require-dev": {
         "roave/security-advisories": "dev-master",
-        "phpunit/phpunit": "7.5.*"
+        "squizlabs/php_codesniffer": "^3.5",
+        "phpmd/phpmd": "@stable",
+        "phpunit/phpunit": "7.5.*",
+        "phpstan/phpstan-phpunit": "0.12.*",
+        "phpstan/phpstan-symfony": "0.12.*",
+        "phpstan/phpstan-strict-rules": "0.12.*",
+        "phpstan/extension-installer": "1.0.*"
     },
     "scripts": {
-        "test": "phpunit"
+        "check": "composer run check:phpstan && composer run check:phpmd && composer run check:phpcs",
+        "check:phpstan": "phpstan analyse",
+        "check:phpmd": "phpmd src,tests text phpmd.xml.dist --suffixes=php",
+        "check:phpcs": "phpcs src tests",
+        "fix": "@fix:phpcbf",
+        "fix:phpcbf": "phpcbf src tests",
+        "test": "phpunit",
+        "test:integration": "phpunit --testsuite integration",
+        "test:unit": "phpunit --testsuite unit"
     }
 }
