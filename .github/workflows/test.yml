@@ -14,13 +14,13 @@ jobs:
       matrix:
         php-versions: ['7.1', '7.2', '7.3']
         composer-flags: ['', '--prefer-lowest']
-        coverage: none
     steps:
       - uses: actions/checkout@v2
       - name: Setup PHP
         uses: shivammathur/setup-php@v2
         with:
           php-version: ${{ matrix.php-versions }}
+          coverage: none
       - name: Validate composer.json and composer.lock
         run: composer validate
       - name: Install dependencies
