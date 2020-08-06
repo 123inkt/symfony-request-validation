@@ -31,7 +31,7 @@
         "phpstan/extension-installer": "1.0.*"
     },
     "scripts": {
-        "check": "composer run check:phpstan && composer run check:phpmd && composer run check:phpcs",
+        "check": ["@check:phpstan", "@check:phpmd", "@check:phpcs"],
         "check:phpstan": "phpstan analyse",
         "check:phpmd": "phpmd src,tests text phpmd.xml.dist --suffixes=php",
         "check:phpcs": "phpcs src tests",
