@@ -47,7 +47,7 @@ class RequestConstraintValidatorTest extends TestCase
 
     /**
      * @param array<mixed> $data
-     * @dataProvider dataProvider
+     * @dataProvider \DigitalRevolution\SymfonyRequestValidation\Tests\DataProvider\Constraint\RequestConstraintValidatorDataProvider::dataProvider
      * @covers ::validate
      */
     public function testValidateQuery(array $data, bool $success): void
@@ -61,7 +61,7 @@ class RequestConstraintValidatorTest extends TestCase
 
     /**
      * @param array<mixed> $data
-     * @dataProvider dataProvider
+     * @dataProvider \DigitalRevolution\SymfonyRequestValidation\Tests\DataProvider\Constraint\RequestConstraintValidatorDataProvider::dataProvider
      * @covers ::validate
      */
     public function testValidateRequest(array $data, bool $success): void
@@ -76,7 +76,7 @@ class RequestConstraintValidatorTest extends TestCase
 
     /**
      * @param array<mixed> $data
-     * @dataProvider dataProvider
+     * @dataProvider \DigitalRevolution\SymfonyRequestValidation\Tests\DataProvider\Constraint\RequestConstraintValidatorDataProvider::dataProvider
      * @covers ::validate
      */
     public function testValidateAttributes(array $data, bool $success): void
@@ -90,7 +90,7 @@ class RequestConstraintValidatorTest extends TestCase
 
     /**
      * @param array<mixed> $data
-     * @dataProvider dataProvider
+     * @dataProvider \DigitalRevolution\SymfonyRequestValidation\Tests\DataProvider\Constraint\RequestConstraintValidatorDataProvider::dataProvider
      * @covers ::validate
      */
     public function testValidateQueryRequestAttributes(array $data, bool $success): void
@@ -104,17 +104,6 @@ class RequestConstraintValidatorTest extends TestCase
         $this->context->setConstraint($constraint);
         $this->validator->validate($request, $constraint);
         static::assertCount($success ? 0 : 3, $this->context->getViolations());
-    }
-
-    /**
-     * @return array<string, array<array, bool>>
-     */
-    public function dataProvider(): array
-    {
-        return [
-            'success' => [['email' => 'example@example.com'], true],
-            'failure' => [['email' => 'unit test'], false]
-        ];
     }
 
     /**
