@@ -7,7 +7,6 @@ use DigitalRevolution\SymfonyRequestValidation\ValidationRules;
 use InvalidArgumentException;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Validator\Constraints\NotBlank;
-use Symfony\Component\Validator\Constraints\NotNull;
 
 /**
  * @coversDefaultClass \DigitalRevolution\SymfonyRequestValidation\ValidationRules
@@ -16,20 +15,13 @@ class ValidationRulesTest extends TestCase
 {
     /**
      * @covers ::__construct
-     * @covers ::getQueryRules
-     * @covers ::getRequestRules
+     * @covers ::getDefinitions
      */
     public function testConstructorAndGetters(): void
     {
-        $constraintA = new NotBlank();
-        $constraintB = new NotNull();
-        $rules       = new ValidationRules(['query' => $constraintA]);
-        static::assertSame($constraintA, $rules->getQueryRules());
-        static::assertNull($rules->getRequestRules());
-
-        $rules = new ValidationRules(['query' => $constraintA, 'request' => $constraintB]);
-        static::assertSame($constraintA, $rules->getQueryRules());
-        static::assertSame($constraintB, $rules->getRequestRules());
+        $definitions = ['query' => new NotBlank()];
+        $rules       = new ValidationRules($definitions);
+        static::assertSame($definitions, $rules->getDefinitions());
     }
 
     /**

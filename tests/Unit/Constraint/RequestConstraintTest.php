@@ -51,6 +51,6 @@ class RequestConstraintTest extends TestCase
     public function testGetRequiredOptions(): void
     {
         $constraint = new RequestConstraint();
-        static::assertSame(['query', 'request'], $constraint->getRequiredOptions());
+        static::assertSame(['query', 'request', 'attributes'], $constraint->getRequiredOptions());
     }
 }
