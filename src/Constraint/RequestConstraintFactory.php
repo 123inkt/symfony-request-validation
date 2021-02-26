@@ -22,15 +22,9 @@ class RequestConstraintFactory
      */
     public function createConstraint(ValidationRules $validationRules): RequestConstraint
     {
-        $options            = [];
-        $queryDefinitions   = $validationRules->getQueryRules();
-        $requestDefinitions = $validationRules->getRequestRules();
-
-        if ($queryDefinitions !== null) {
-            $options['query'] = $this->factory->fromRuleDefinitions($queryDefinitions);
-        }
-        if ($requestDefinitions !== null) {
-            $options['request'] = $this->factory->fromRuleDefinitions($requestDefinitions);
+        $options = [];
+        foreach ($validationRules->getDefinitions() as $key => $definitions) {
+            $options[$key] = $this->factory->fromRuleDefinitions($definitions);
         }
 
         return new RequestConstraint($options);
