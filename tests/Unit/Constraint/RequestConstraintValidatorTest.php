@@ -73,21 +73,37 @@ class RequestConstraintValidatorTest extends TestCase
         static::assertCount($success ? 0 : 1, $this->context->getViolations());
     }
 
+
     /**
      * @param array<mixed> $data
      * @dataProvider dataProvider
      * @covers ::validate
      */
-    public function testValidateQueryAndRequest(array $data, bool $success): void
+    public function testValidateAttributes(array $data, bool $success): void
     {
-        $request    = new Request($data, $data);
+        $request    = new Request([], [], $data);
+        $constraint = new RequestConstraint(['attributes' => new Assert\Collection(['email' => new Assert\Required(new Assert\Email())])]);
+        $this->context->setConstraint($constraint);
+        $this->validator->validate($request, $constraint);
+        static::assertCount($success ? 0 : 1, $this->context->getViolations());
+    }
+
+    /**
+     * @param array<mixed> $data
+     * @dataProvider dataProvider
+     * @covers ::validate
+     */
+    public function testValidateQueryRequestAttributes(array $data, bool $success): void
+    {
+        $request    = new Request($data, $data, $data);
         $constraint = new RequestConstraint([
-            'query'   => new Assert\Collection(['email' => new Assert\Required(new Assert\Email())]),
-            'request' => new Assert\Collection(['email' => new Assert\Required(new Assert\Email())])
+            'query'      => new Assert\Collection(['email' => new Assert\Required(new Assert\Email())]),
+            'request'    => new Assert\Collection(['email' => new Assert\Required(new Assert\Email())]),
+            'attributes' => new Assert\Collection(['email' => new Assert\Required(new Assert\Email())])
         ]);
         $this->context->setConstraint($constraint);
         $this->validator->validate($request, $constraint);
-        static::assertCount($success ? 0 : 2, $this->context->getViolations());
+        static::assertCount($success ? 0 : 3, $this->context->getViolations());
     }
 
     /**
