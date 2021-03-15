@@ -47,7 +47,7 @@ class RequestConstraintValidatorTest extends TestCase
 
     /**
      * @param array<mixed> $data
-     * @dataProvider dataProvider
+     * @dataProvider \DigitalRevolution\SymfonyRequestValidation\Tests\DataProvider\Constraint\RequestConstraintValidatorDataProvider::dataProvider
      * @covers ::validate
      */
     public function testValidateQuery(array $data, bool $success): void
@@ -61,7 +61,7 @@ class RequestConstraintValidatorTest extends TestCase
 
     /**
      * @param array<mixed> $data
-     * @dataProvider dataProvider
+     * @dataProvider \DigitalRevolution\SymfonyRequestValidation\Tests\DataProvider\Constraint\RequestConstraintValidatorDataProvider::dataProvider
      * @covers ::validate
      */
     public function testValidateRequest(array $data, bool $success): void
@@ -73,32 +73,37 @@ class RequestConstraintValidatorTest extends TestCase
         static::assertCount($success ? 0 : 1, $this->context->getViolations());
     }
 
+
     /**
      * @param array<mixed> $data
-     * @dataProvider dataProvider
+     * @dataProvider \DigitalRevolution\SymfonyRequestValidation\Tests\DataProvider\Constraint\RequestConstraintValidatorDataProvider::dataProvider
      * @covers ::validate
      */
-    public function testValidateQueryAndRequest(array $data, bool $success): void
+    public function testValidateAttributes(array $data, bool $success): void
     {
-        $request    = new Request($data, $data);
-        $constraint = new RequestConstraint([
-            'query'   => new Assert\Collection(['email' => new Assert\Required(new Assert\Email())]),
-            'request' => new Assert\Collection(['email' => new Assert\Required(new Assert\Email())])
-        ]);
+        $request    = new Request([], [], $data);
+        $constraint = new RequestConstraint(['attributes' => new Assert\Collection(['email' => new Assert\Required(new Assert\Email())])]);
         $this->context->setConstraint($constraint);
         $this->validator->validate($request, $constraint);
-        static::assertCount($success ? 0 : 2, $this->context->getViolations());
+        static::assertCount($success ? 0 : 1, $this->context->getViolations());
     }
 
     /**
-     * @return array<string, array<array, bool>>
+     * @param array<mixed> $data
+     * @dataProvider \DigitalRevolution\SymfonyRequestValidation\Tests\DataProvider\Constraint\RequestConstraintValidatorDataProvider::dataProvider
+     * @covers ::validate
      */
-    public function dataProvider(): array
+    public function testValidateQueryRequestAttributes(array $data, bool $success): void
     {
-        return [
-            'success' => [['email' => 'example@example.com'], true],
-            'failure' => [['email' => 'unit test'], false]
-        ];
+        $request    = new Request($data, $data, $data);
+        $constraint = new RequestConstraint([
+            'query'      => new Assert\Collection(['email' => new Assert\Required(new Assert\Email())]),
+            'request'    => new Assert\Collection(['email' => new Assert\Required(new Assert\Email())]),
+            'attributes' => new Assert\Collection(['email' => new Assert\Required(new Assert\Email())])
+        ]);
+        $this->context->setConstraint($constraint);
+        $this->validator->validate($request, $constraint);
+        static::assertCount($success ? 0 : 3, $this->context->getViolations());
     }
 
     /**

@@ -51,5 +51,12 @@ class RequestConstraintValidator extends ConstraintValidator
                 ->setCode($constraint::MISSING_REQUEST_CONSTRAINT)
                 ->addViolation();
         }
+
+        if ($constraint->attributes !== null) {
+            $context->getValidator()
+                ->inContext($context)
+                ->atPath('[attributes]')
+                ->validate($value->attributes->all(), $constraint->attributes);
+        }
     }
 }
