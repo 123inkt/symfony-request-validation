@@ -26,8 +26,6 @@ class RequestConstraintValidatorTest extends TestCase
 
     protected function setUp(): void
     {
-        parent::setUp();
-
         $translatorMock = $this->createMock(TranslatorInterface::class);
         $translatorMock->method('trans')->willReturn('');
 
@@ -49,6 +47,7 @@ class RequestConstraintValidatorTest extends TestCase
      * @param array<mixed> $data
      * @dataProvider \DigitalRevolution\SymfonyRequestValidation\Tests\DataProvider\Constraint\RequestConstraintValidatorDataProvider::dataProvider
      * @covers ::validate
+     * @covers ::validateQuery
      */
     public function testValidateQuery(array $data, bool $success): void
     {
@@ -63,6 +62,7 @@ class RequestConstraintValidatorTest extends TestCase
      * @param array<mixed> $data
      * @dataProvider \DigitalRevolution\SymfonyRequestValidation\Tests\DataProvider\Constraint\RequestConstraintValidatorDataProvider::dataProvider
      * @covers ::validate
+     * @covers ::validateRequest
      */
     public function testValidateRequest(array $data, bool $success): void
     {
@@ -77,6 +77,7 @@ class RequestConstraintValidatorTest extends TestCase
      * @param array<mixed> $data
      * @dataProvider \DigitalRevolution\SymfonyRequestValidation\Tests\DataProvider\Constraint\RequestConstraintValidatorDataProvider::dataProvider
      * @covers ::validate
+     * @covers ::validateAttributes
      */
     public function testValidateAttributes(array $data, bool $success): void
     {
@@ -91,6 +92,9 @@ class RequestConstraintValidatorTest extends TestCase
      * @param array<mixed> $data
      * @dataProvider \DigitalRevolution\SymfonyRequestValidation\Tests\DataProvider\Constraint\RequestConstraintValidatorDataProvider::dataProvider
      * @covers ::validate
+     * @covers ::validateQuery
+     * @covers ::validateRequest
+     * @covers ::validateAttributes
      */
     public function testValidateQueryRequestAttributes(array $data, bool $success): void
     {
@@ -139,6 +143,7 @@ class RequestConstraintValidatorTest extends TestCase
      * Test that if no constraints have been specified. the request's query _must_ be empty
      *
      * @covers ::validate
+     * @covers ::validateQuery
      */
     public function testValidateEmptyConstraintsFilledQuery(): void
     {
@@ -155,6 +160,7 @@ class RequestConstraintValidatorTest extends TestCase
      * Test that if no constraints have been specified. the request's query _must_ not be empty
      *
      * @covers ::validate
+     * @covers ::validateQuery
      */
     public function testValidateEmptyConstraintsFilledQueryAllowed(): void
     {
@@ -171,6 +177,7 @@ class RequestConstraintValidatorTest extends TestCase
      * Test that if no constraints have been specified. the request's request _must_ be empty
      *
      * @covers ::validate
+     * @covers ::validateRequest
      */
     public function testValidateEmptyConstraintsFilledRequest(): void
     {
@@ -187,6 +194,7 @@ class RequestConstraintValidatorTest extends TestCase
      * Test that if no constraints have been specified, and extra fields are allowed. the request's request _must_ not be empty
      *
      * @covers ::validate
+     * @covers ::validateRequest
      */
     public function testValidateEmptyConstraintsFilledRequestAllowed(): void
     {
@@ -202,6 +210,7 @@ class RequestConstraintValidatorTest extends TestCase
 
     /**
      * @covers ::validate
+     * @covers ::validateQuery
      */
     public function testValidateQueryFailure(): void
     {

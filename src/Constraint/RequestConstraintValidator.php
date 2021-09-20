@@ -19,42 +19,56 @@ class RequestConstraintValidator extends ConstraintValidator
         if ($value === null) {
             return;
         }
-        $context = $this->context;
 
+        $context = $this->context;
         if ($value instanceof Request === false) {
             $context->buildViolation($constraint->wrongTypeMessage)
                 ->setCode($constraint::WRONG_VALUE_TYPE)
                 ->addViolation();
+
             return;
         }
 
+        $this->validateQuery($constraint, $value);
+        $this->validateRequest($constraint, $value);
+        $this->validateAttributes($constraint, $value);
+    }
+
+    private function validateQuery(RequestConstraint $constraint, Request $value): void
+    {
         if ($constraint->query !== null) {
-            $context->getValidator()
-                ->inContext($context)
+            $this->context->getValidator()
+                ->inContext($this->context)
                 ->atPath('[query]')
                 ->validate($value->query->all(), $constraint->query);
         } elseif ($constraint->allowExtraFields === false && count($value->query) > 0) {
-            $context->buildViolation($constraint->queryMessage)
+            $this->context->buildViolation($constraint->queryMessage)
                 ->atPath('[query]')
                 ->setCode($constraint::MISSING_QUERY_CONSTRAINT)
                 ->addViolation();
         }
+    }
 
+    private function validateRequest(RequestConstraint $constraint, Request $value): void
+    {
         if ($constraint->request !== null) {
-            $context->getValidator()
-                ->inContext($context)
+            $this->context->getValidator()
+                ->inContext($this->context)
                 ->atPath('[request]')
                 ->validate($value->request->all(), $constraint->request);
         } elseif ($constraint->allowExtraFields === false && count($value->request) > 0) {
-            $context->buildViolation($constraint->requestMessage)
+            $this->context->buildViolation($constraint->requestMessage)
                 ->atPath('[request]')
                 ->setCode($constraint::MISSING_REQUEST_CONSTRAINT)
                 ->addViolation();
         }
+    }
 
+    private function validateAttributes(RequestConstraint $constraint, Request $value): void
+    {
         if ($constraint->attributes !== null) {
-            $context->getValidator()
-                ->inContext($context)
+            $this->context->getValidator()
+                ->inContext($this->context)
                 ->atPath('[attributes]')
                 ->validate($value->attributes->all(), $constraint->attributes);
         }
