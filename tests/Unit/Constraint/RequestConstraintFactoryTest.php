@@ -34,4 +34,22 @@ class RequestConstraintFactoryTest extends TestCase
         $result      = $factory->createConstraint(new ValidationRules(['query' => $constraintA, 'request' => $constraintB]));
         static::assertEquals(new RequestConstraint(['query' => $constraintA, 'request' => $constraintB]), $result);
     }
+
+    /**
+     * @covers ::createConstraint
+     * @throws InvalidRuleException
+     */
+    public function testCreateRequestConstraintAllowExtraFields(): void
+    {
+        $factory = new RequestConstraintFactory(new ConstraintFactory());
+
+        // without any rules
+        $result = $factory->createConstraint(new ValidationRules([], true));
+        static::assertEquals(new RequestConstraint(['allowExtraFields' => true]), $result);
+
+        $constraintA = new Assert\NotNull();
+        $constraintB = new Assert\NotBlank();
+        $result      = $factory->createConstraint(new ValidationRules(['query' => $constraintA, 'request' => $constraintB], true));
+        static::assertEquals(new RequestConstraint(['query' => $constraintA, 'request' => $constraintB, 'allowExtraFields' => true]), $result);
+    }
 }

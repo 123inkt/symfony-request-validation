@@ -34,22 +34,26 @@ class RequestConstraint extends Constraint
     /** @var Constraint|Constraint[]|null */
     public $attributes;
 
+    /** @var bool */
+    public $allowExtraFields;
+
     /**
      * @param array{query?: Constraint|Constraint[], request?: Constraint|Constraint[], attributes?: Constraint|Constraint[]}|null $options
      */
     public function __construct($options = null)
     {
         // make sure defaults are set
-        $options               = $options ?? [];
-        $options['query']      = $options['query'] ?? null;
-        $options['request']    = $options['request'] ?? null;
-        $options['attributes'] = $options['attributes'] ?? null;
+        $options                     = $options ?? [];
+        $options['query']            = $options['query'] ?? null;
+        $options['request']          = $options['request'] ?? null;
+        $options['attributes']       = $options['attributes'] ?? null;
+        $options['allowExtraFields'] = $options['allowExtraFields'] ?? false;
 
         parent::__construct($options);
     }
 
     public function getRequiredOptions(): array
     {
-        return ['query', 'request', 'attributes'];
+        return ['query', 'request', 'attributes', 'allowExtraFields'];
     }
 }

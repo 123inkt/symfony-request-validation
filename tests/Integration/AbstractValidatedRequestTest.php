@@ -98,7 +98,6 @@ class AbstractValidatedRequestTest extends TestCase
         static::assertTrue($request->isValid());
     }
 
-
     public function dataProvider(): Generator
     {
         // test required fields
