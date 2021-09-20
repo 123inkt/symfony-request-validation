@@ -38,7 +38,12 @@ class RequestConstraint extends Constraint
     public $allowExtraFields;
 
     /**
-     * @param array{query?: Constraint|Constraint[], request?: Constraint|Constraint[], attributes?: Constraint|Constraint[]}|null $options
+     * @param array{
+     *     query?: Constraint|Constraint[],
+     *     request?: Constraint|Constraint[],
+     *     attributes?: Constraint|Constraint[],
+     *     allowExtraFields?: bool
+     *     }|null $options
      */
     public function __construct($options = null)
     {
