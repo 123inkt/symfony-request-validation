@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace DigitalRevolution\SymfonyRequestValidation;
 
 use InvalidArgumentException;
+use Symfony\Component\Validator\Constraint;
 
 class ValidationRules
 {
