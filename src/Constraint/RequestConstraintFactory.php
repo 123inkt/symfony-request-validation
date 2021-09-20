@@ -6,6 +6,7 @@ namespace DigitalRevolution\SymfonyRequestValidation\Constraint;
 use DigitalRevolution\SymfonyRequestValidation\ValidationRules;
 use DigitalRevolution\SymfonyValidationShorthand\ConstraintFactory;
 use DigitalRevolution\SymfonyValidationShorthand\Rule\InvalidRuleException;
+use Symfony\Component\Validator\Constraint;
 
 class RequestConstraintFactory
 {
@@ -27,6 +28,14 @@ class RequestConstraintFactory
             $options[$key] = $this->factory->fromRuleDefinitions($definitions, $validationRules->getAllowExtraFields());
         }
 
+        /**
+         * @var array{
+         *     query?: Constraint|Constraint[],
+         *     request?: Constraint|Constraint[],
+         *     attributes?: Constraint|Constraint[],
+         *     allowExtraFields: bool
+         * } $options
+         */
         // Set extra constraint options
         $options['allowExtraFields'] = $validationRules->getAllowExtraFields();
 
