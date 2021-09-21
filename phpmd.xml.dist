@@ -7,7 +7,16 @@
     <description>
         The Code Size Ruleset contains a collection of rules that find code size related problems.
     </description>
-    <rule ref="rulesets/codesize.xml"/>
+
+    <rule ref="rulesets/codesize.xml">
+        <exclude name="TooManyPublicMethods"/>
+    </rule>
+    <rule ref="rulesets/codesize.xml/TooManyPublicMethods">
+        <properties>
+            <property name="ignorepattern" value="(^(set|get|test))i"/>
+        </properties>
+    </rule>
+
     <rule ref="rulesets/controversial.xml"/>
     <rule ref="rulesets/design.xml">
         <exclude name="CouplingBetweenObjects" />

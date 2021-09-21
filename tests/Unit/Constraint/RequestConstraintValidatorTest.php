@@ -26,8 +26,6 @@ class RequestConstraintValidatorTest extends TestCase
 
     protected function setUp(): void
     {
-        parent::setUp();
-
         $translatorMock = $this->createMock(TranslatorInterface::class);
         $translatorMock->method('trans')->willReturn('');
 
@@ -49,6 +47,7 @@ class RequestConstraintValidatorTest extends TestCase
      * @param array<mixed> $data
      * @dataProvider \DigitalRevolution\SymfonyRequestValidation\Tests\DataProvider\Constraint\RequestConstraintValidatorDataProvider::dataProvider
      * @covers ::validate
+     * @covers ::validateQuery
      */
     public function testValidateQuery(array $data, bool $success): void
     {
@@ -63,6 +62,7 @@ class RequestConstraintValidatorTest extends TestCase
      * @param array<mixed> $data
      * @dataProvider \DigitalRevolution\SymfonyRequestValidation\Tests\DataProvider\Constraint\RequestConstraintValidatorDataProvider::dataProvider
      * @covers ::validate
+     * @covers ::validateRequest
      */
     public function testValidateRequest(array $data, bool $success): void
     {
@@ -73,11 +73,11 @@ class RequestConstraintValidatorTest extends TestCase
         static::assertCount($success ? 0 : 1, $this->context->getViolations());
     }
 
-
     /**
      * @param array<mixed> $data
      * @dataProvider \DigitalRevolution\SymfonyRequestValidation\Tests\DataProvider\Constraint\RequestConstraintValidatorDataProvider::dataProvider
      * @covers ::validate
+     * @covers ::validateAttributes
      */
     public function testValidateAttributes(array $data, bool $success): void
     {
@@ -92,6 +92,9 @@ class RequestConstraintValidatorTest extends TestCase
      * @param array<mixed> $data
      * @dataProvider \DigitalRevolution\SymfonyRequestValidation\Tests\DataProvider\Constraint\RequestConstraintValidatorDataProvider::dataProvider
      * @covers ::validate
+     * @covers ::validateQuery
+     * @covers ::validateRequest
+     * @covers ::validateAttributes
      */
     public function testValidateQueryRequestAttributes(array $data, bool $success): void
     {
@@ -137,9 +140,10 @@ class RequestConstraintValidatorTest extends TestCase
     }
 
     /**
-     * Test that if no constraints have been specified. the request query _must_ be empty
+     * Test that if no constraints have been specified. the request's query _must_ be empty
      *
      * @covers ::validate
+     * @covers ::validateQuery
      */
     public function testValidateEmptyConstraintsFilledQuery(): void
     {
@@ -153,9 +157,27 @@ class RequestConstraintValidatorTest extends TestCase
     }
 
     /**
-     * Test that if no constraints have been specified. the request request _must_ be empty
+     * Test that if no constraints have been specified. the request's query _must_ not be empty
      *
      * @covers ::validate
+     * @covers ::validateQuery
+     */
+    public function testValidateEmptyConstraintsFilledQueryAllowed(): void
+    {
+        $request    = new Request(['a']);
+        $constraint = new RequestConstraint();
+        $constraint->allowExtraFields = true;
+        $this->context->setConstraint($constraint);
+        $this->validator->validate($request, $constraint);
+        $violations = $this->context->getViolations();
+        static::assertCount(0, $violations);
+    }
+
+    /**
+     * Test that if no constraints have been specified. the request's request _must_ be empty
+     *
+     * @covers ::validate
+     * @covers ::validateRequest
      */
     public function testValidateEmptyConstraintsFilledRequest(): void
     {
@@ -169,7 +191,26 @@ class RequestConstraintValidatorTest extends TestCase
     }
 
     /**
+     * Test that if no constraints have been specified, and extra fields are allowed. the request's request _must_ not be empty
+     *
      * @covers ::validate
+     * @covers ::validateRequest
+     */
+    public function testValidateEmptyConstraintsFilledRequestAllowed(): void
+    {
+        $request    = new Request([], ['b']);
+        $constraint = new RequestConstraint();
+        $constraint->allowExtraFields = true;
+
+        $this->context->setConstraint($constraint);
+        $this->validator->validate($request, $constraint);
+        $violations = $this->context->getViolations();
+        static::assertCount(0, $violations);
+    }
+
+    /**
+     * @covers ::validate
+     * @covers ::validateQuery
      */
     public function testValidateQueryFailure(): void
     {
