@@ -16,8 +16,8 @@
     },
     "require": {
         "php": ">=7.4",
-        "symfony/http-foundation": "5.*",
-        "symfony/validator": "5.*",
+        "symfony/http-foundation": "^5.0 || ^6.0",
+        "symfony/validator": "^5.0 || ^6.0",
         "digitalrevolution/symfony-validation-shorthand": "^1.0.4"
     },
     "require-dev": {
@@ -41,5 +41,10 @@
         "test": "phpunit",
         "test:integration": "phpunit --testsuite integration",
         "test:unit": "phpunit --testsuite unit"
+    },
+    "config": {
+        "allow-plugins": {
+            "phpstan/extension-installer": true
+        }
     }
 }
