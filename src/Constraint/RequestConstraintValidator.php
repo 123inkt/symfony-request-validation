@@ -10,6 +10,10 @@ use Symfony\Component\Validator\Exception\UnexpectedTypeException;
 
 class RequestConstraintValidator extends ConstraintValidator
 {
+    /**
+     * @param mixed $value
+     * @inheritDoc
+     */
     public function validate($value, Constraint $constraint): void
     {
         if ($constraint instanceof RequestConstraint === false) {
