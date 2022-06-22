@@ -6,26 +6,19 @@ namespace DigitalRevolution\SymfonyRequestValidation;
 use InvalidArgumentException;
 use Symfony\Component\Validator\Constraint;
 
+/**
+ * @phpstan-type ConstraintList array<string, string|Constraint|array<string|Constraint>>
+ * @phpstan-type DefinitionCollection array{query?: ConstraintList, request?: ConstraintList, attributes?: ConstraintList }
+ */
 class ValidationRules
 {
-    /**
-     * @var array{
-     *          query?:      Constraint|array<string, string|Constraint|array<string|Constraint>>,
-     *          request?:    Constraint|array<string, string|Constraint|array<string|Constraint>>,
-     *          attributes?: Constraint|array<string, string|Constraint|array<string|Constraint>>
-     * } $definitions
-     */
+    /** @phpstan-var DefinitionCollection $definitions */
     private $definitions;
 
-    /** @var bool */
-    private $allowExtraFields;
+    private bool $allowExtraFields;
 
     /**
-     * @param array{
-     *          query?:      Constraint|array<string, string|Constraint|array<string|Constraint>>,
-     *          request?:    Constraint|array<string, string|Constraint|array<string|Constraint>>,
-     *          attributes?: Constraint|array<string, string|Constraint|array<string|Constraint>>
-     *          } $definitions
+     * @phpstan-param DefinitionCollection $definitions
      * @param bool $allowExtraFields Allow the request to have extra fields, not present in the definition list
      */
     public function __construct(array $definitions, bool $allowExtraFields = false)
@@ -40,11 +33,7 @@ class ValidationRules
     }
 
     /**
-     * @return array{
-     *          query?:      Constraint|array<string, string|Constraint|array<string|Constraint>>,
-     *          request?:    Constraint|array<string, string|Constraint|array<string|Constraint>>,
-     *          attributes?: Constraint|array<string, string|Constraint|array<string|Constraint>>
-     * } $definitions
+     * @phpstan-return DefinitionCollection $definitions
      */
     public function getDefinitions(): array
     {
