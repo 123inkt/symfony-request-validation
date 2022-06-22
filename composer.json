@@ -47,10 +47,5 @@
         "test": "phpunit",
         "test:integration": "phpunit --testsuite integration",
         "test:unit": "phpunit --testsuite unit"
-    },
-    "config": {
-        "allow-plugins": {
-            "phpstan/extension-installer": true
-        }
     }
 }
