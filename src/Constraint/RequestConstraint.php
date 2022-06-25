@@ -11,7 +11,7 @@ class RequestConstraint extends Constraint
     public const MISSING_QUERY_CONSTRAINT   = 'b62ab5ca-ee6f-4baf-bdef-ffbe14f674d6';
     public const MISSING_REQUEST_CONSTRAINT = 'c3990dad-3638-449b-9dd3-4dd42e90c52f';
 
-    /** @var array<string, string> */
+    /** @var mixed */
     protected static $errorNames = [
         self::WRONG_VALUE_TYPE           => 'WRONG_VALUE_TYPE',
         self::MISSING_QUERY_CONSTRAINT   => 'MISSING_QUERY_CONSTRAINT',

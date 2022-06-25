@@ -32,4 +32,16 @@ class ValidationRulesTest extends TestCase
         $this->expectException(InvalidArgumentException::class);
         new ValidationRules(['query' => 'a', 'b']);
     }
+
+    /**
+     * @covers ::getAllowExtraFields
+     */
+    public function testGetAllowExtraFields(): void
+    {
+        $rules = new ValidationRules(['query' => 'a']);
+        static::assertFalse($rules->getAllowExtraFields());
+
+        $rules = new ValidationRules(['query' => 'a'], true);
+        static::assertTrue($rules->getAllowExtraFields());
+    }
 }
