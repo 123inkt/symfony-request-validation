@@ -39,7 +39,7 @@ class ExampleRequest extends AbstractValidatedRequest
         return $this->request->request->getInt('productId');
     }
     
-    public function getProductName(): int
+    public function getProductName(): string
     {
         return $this->request->request->getString('productName');
     }
