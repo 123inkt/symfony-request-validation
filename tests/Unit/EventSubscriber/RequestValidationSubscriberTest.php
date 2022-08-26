@@ -18,7 +18,6 @@ use Symfony\Component\HttpKernel\KernelEvents;
 
 /**
  * @coversDefaultClass \DigitalRevolution\SymfonyRequestValidation\EventSubscriber\RequestValidationSubscriber
- * @covers ::__construct
  */
 class RequestValidationSubscriberTest extends TestCase
 {
