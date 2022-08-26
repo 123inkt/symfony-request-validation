@@ -6,11 +6,5 @@ use DigitalRevolution\SymfonyRequestValidation\EventSubscriber\RequestValidation
 use Symfony\Component\DependencyInjection\Loader\Configurator\ContainerConfigurator;
 
 return static function (ContainerConfigurator $containerConfigurator): void {
-    $services = $containerConfigurator->services();
-    $services
-        ->defaults()
-        ->autowire()
-        ->autoconfigure();
-
-    $services->set(RequestValidationSubscriber::class);
+    $containerConfigurator->services()->set(RequestValidationSubscriber::class)->tag('kernel.event_subscriber');
 };
