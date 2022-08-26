@@ -7,8 +7,10 @@ use DigitalRevolution\SymfonyRequestValidation\Constraint\RequestConstraintFacto
 use DigitalRevolution\SymfonyRequestValidation\Renderer\ViolationListRenderer;
 use DigitalRevolution\SymfonyValidationShorthand\ConstraintFactory;
 use DigitalRevolution\SymfonyValidationShorthand\Rule\InvalidRuleException;
+use Exception;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\ConstraintViolationInterface;
 use Symfony\Component\Validator\ConstraintViolationListInterface;
@@ -16,17 +18,10 @@ use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 abstract class AbstractValidatedRequest
 {
-    /** @var Request */
-    protected $request;
-
-    /** @var ValidatorInterface */
-    protected $validator;
-
-    /** @var Constraint */
-    protected $constraint;
-
-    /** @var bool */
-    protected $isValid;
+    protected Request            $request;
+    protected ValidatorInterface $validator;
+    protected Constraint         $constraint;
+    protected bool               $isValid = false;
 
     /**
      * @throws InvalidRuleException
@@ -42,7 +37,6 @@ abstract class AbstractValidatedRequest
         $this->request    = $request;
         $this->validator  = $validator;
         $this->constraint = (new RequestConstraintFactory(new ConstraintFactory()))->createConstraint($this->getValidationRules());
-        $this->isValid    = $this->validate();
     }
 
     public function getRequest(): Request
@@ -56,36 +50,35 @@ abstract class AbstractValidatedRequest
     }
 
     /**
+     * @return Exception|Response|null
+     * @internal invoked by RequestValidationSubscriber
+     */
+    public function validate()
+    {
+        $violationList = $this->validator->validate($this->request, $this->constraint);
+        if (count($violationList) > 0) {
+            return $this->handleViolations($violationList);
+        }
+        $this->isValid = true;
+
+        return null;
+    }
+
+    /**
      * Get all the constraints for the current query params
      */
     abstract protected function getValidationRules(): ValidationRules;
 
     /**
      * Called when there are one or more violations. Defaults to throwing RequestValidationException. Overwrite
-     * to add your own handling
+     * to add your own handling. If response is returned, this response will be send instead of invoking the controller.
      *
      * @param ConstraintViolationListInterface<ConstraintViolationInterface> $violationList
-     * @throws InvalidRequestException
+     *
+     * @return Exception|Response
      */
-    protected function handleViolations(ConstraintViolationListInterface $violationList): void
+    protected function handleViolations(ConstraintViolationListInterface $violationList)
     {
-        $renderer = new ViolationListRenderer($violationList);
-        throw new InvalidRequestException($renderer->render());
-    }
-
-    /**
-     * @throws InvalidRequestException
-     */
-    protected function validate(): bool
-    {
-        $violationList = $this->validator->validate($this->request, $this->constraint);
-        if (count($violationList) > 0) {
-            $this->handleViolations($violationList);
-            // @codeCoverageIgnoreStart
-            return false;
-            // @codeCoverageIgnoreEnd
-        }
-
-        return true;
+        return new InvalidRequestException((new ViolationListRenderer($violationList))->render());
     }
 }
