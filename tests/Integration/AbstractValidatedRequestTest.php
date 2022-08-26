@@ -22,8 +22,10 @@ class AbstractValidatedRequestTest extends TestCase
 {
     /**
      * @dataProvider dataProvider
-     * @param array<string, mixed> $data
+     *
+     * @param array<string, mixed>                                                      $data
      * @param Collection|array<string, string|Constraint|array<string|Constraint>>|null $rules
+     *
      * @throws InvalidRequestException|InvalidRuleException
      */
     public function testGetRequestValidation(array $data, $rules, bool $isValid): void
@@ -35,21 +37,25 @@ class AbstractValidatedRequestTest extends TestCase
         $validator       = Validation::createValidator();
         $validationRules = new ValidationRules(['query' => $rules]);
 
-        // expect exception
-        if ($isValid === false) {
-            $this->expectException(InvalidRequestException::class);
-            new MockValidatedRequest($stack, $validator, $validationRules);
-        }
-
-        // expect success
         $request = new MockValidatedRequest($stack, $validator, $validationRules);
-        static::assertTrue($request->isValid());
+        $result  = $request->validate();
+
+        if ($isValid === false) {
+            // expect exception
+            static::assertInstanceOf(InvalidRequestException::class, $result);
+        } else {
+            // expect success
+            static::assertNull($result);
+            static::assertTrue($request->isValid());
+        }
     }
 
     /**
      * @dataProvider dataProvider
-     * @param array<string, mixed> $data
+     *
+     * @param array<string, mixed>                                                      $data
      * @param Collection|array<string, string|Constraint|array<string|Constraint>>|null $rules
+     *
      * @throws InvalidRequestException|InvalidRuleException
      */
     public function testPostRequestValidation(array $data, $rules, bool $isValid): void
@@ -61,21 +67,25 @@ class AbstractValidatedRequestTest extends TestCase
         $validator       = Validation::createValidator();
         $validationRules = new ValidationRules(['request' => $rules]);
 
-        // expect exception
-        if ($isValid === false) {
-            $this->expectException(InvalidRequestException::class);
-            new MockValidatedRequest($stack, $validator, $validationRules);
-        }
-
-        // expect success
         $request = new MockValidatedRequest($stack, $validator, $validationRules);
-        static::assertTrue($request->isValid());
+        $result  = $request->validate();
+
+        if ($isValid === false) {
+            // expect exception
+            static::assertInstanceOf(InvalidRequestException::class, $result);
+        } else {
+            // expect success
+            static::assertNull($result);
+            static::assertTrue($request->isValid());
+        }
     }
 
     /**
      * @dataProvider dataProvider
-     * @param array<string, mixed> $data
+     *
+     * @param array<string, mixed>                                                      $data
      * @param Collection|array<string, string|Constraint|array<string|Constraint>>|null $rules
+     *
      * @throws InvalidRequestException|InvalidRuleException
      */
     public function testRequestAttributesValidation(array $data, $rules, bool $isValid): void
