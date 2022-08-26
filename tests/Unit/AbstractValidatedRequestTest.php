@@ -87,7 +87,7 @@ class AbstractValidatedRequestTest extends TestCase
             ->willReturn($violations);
 
         $validatedRequest = new MockValidatedRequest($stack, $validator, $rules);
-        $exception = $validatedRequest->validate();
+        $exception        = $validatedRequest->validate();
         static::assertInstanceOf(InvalidRequestException::class, $exception);
     }
 }
