@@ -53,6 +53,7 @@ class AbstractValidatedRequestTest extends TestCase
         $rules = new ValidationRules([]);
 
         $validatedRequest = new MockValidatedRequest($stack, Validation::createValidator(), $rules);
+        static::assertNull($validatedRequest->validate());
         static::assertTrue($validatedRequest->isValid());
         static::assertSame($request, $validatedRequest->getRequest());
     }
@@ -85,7 +86,8 @@ class AbstractValidatedRequestTest extends TestCase
             ->with(...[$request, new RequestConstraint(['request' => $constraint])])
             ->willReturn($violations);
 
-        $this->expectException(InvalidRequestException::class);
-        new MockValidatedRequest($stack, $validator, $rules);
+        $validatedRequest = new MockValidatedRequest($stack, $validator, $rules);
+        $exception = $validatedRequest->validate();
+        static::assertInstanceOf(InvalidRequestException::class, $exception);
     }
 }
