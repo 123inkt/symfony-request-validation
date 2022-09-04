@@ -78,6 +78,7 @@ abstract class AbstractValidatedRequest
      * - return Response to immediately end the request with this response.
      * - throw BadRequestException when request was not valid.
      * @throws BadRequestException
+     * @codeCoverageIgnore
      */
     protected function validateCustomRules(): ?Response
     {
