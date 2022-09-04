@@ -8,11 +8,13 @@ use DigitalRevolution\SymfonyRequestValidation\Constraint\RequestConstraintFacto
 use DigitalRevolution\SymfonyRequestValidation\ValidationRules;
 use RuntimeException;
 use Symfony\Component\HttpFoundation\RequestStack;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 class MockValidatedRequest extends AbstractValidatedRequest
 {
-    private ?ValidationRules $rules;
+    private ?ValidationRules $rules    = null;
+    private ?Response        $response = null;
 
     public function __construct(
         RequestStack             $requestStack,
@@ -33,5 +35,18 @@ class MockValidatedRequest extends AbstractValidatedRequest
             throw new RuntimeException('ValidationRules not set');
         }
         return $this->rules;
+    }
+
+    public function setValidateCustomRulesResult(?Response $response): void
+    {
+        $this->response = $response;
+    }
+
+    /**
+     * Upgrade protected to public
+     */
+    public function validateCustomRules(): ?Response
+    {
+        return $this->response;
     }
 }

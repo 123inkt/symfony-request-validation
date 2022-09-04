@@ -1,20 +1,24 @@
 <?php
 declare(strict_types=1);
 
-namespace EventSubscriber;
+namespace DigitalRevolution\SymfonyRequestValidation\Tests\Unit\EventSubscriber;
 
+use DigitalRevolution\SymfonyRequestValidation\Constraint\RequestConstraintFactory;
 use DigitalRevolution\SymfonyRequestValidation\EventSubscriber\RequestValidationSubscriber;
 use DigitalRevolution\SymfonyRequestValidation\Tests\Mock\MockValidatedRequest;
+use DigitalRevolution\SymfonyRequestValidation\ValidationRules;
 use Exception;
-use InvalidArgumentException;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use stdClass;
+use Symfony\Component\HttpFoundation\Exception\BadRequestException;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Event\ControllerArgumentsEvent;
 use Symfony\Component\HttpKernel\HttpKernelInterface;
 use Symfony\Component\HttpKernel\KernelEvents;
+use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 /**
  * @coversDefaultClass \DigitalRevolution\SymfonyRequestValidation\EventSubscriber\RequestValidationSubscriber
@@ -22,15 +26,28 @@ use Symfony\Component\HttpKernel\KernelEvents;
 class RequestValidationSubscriberTest extends TestCase
 {
     /** @var HttpKernelInterface&MockObject */
-    private HttpKernelInterface         $kernel;
+    private HttpKernelInterface $kernel;
+    /** @var MockValidatedRequest&MockObject */
+    private MockValidatedRequest        $validatedRequest;
     private Request                     $request;
     private RequestValidationSubscriber $subscriber;
 
     protected function setUp(): void
     {
+        parent::setUp();
         $this->kernel     = $this->createMock(HttpKernelInterface::class);
-        $this->request    = new Request();
         $this->subscriber = new RequestValidationSubscriber();
+        $this->request = new Request();
+
+        $stack = new RequestStack();
+        $stack->push($this->request);
+        $this->validatedRequest = $this->getMockBuilder(MockValidatedRequest::class)
+            ->enableOriginalConstructor()
+            ->setConstructorArgs(
+                [$stack, $this->createMock(ValidatorInterface::class), $this->createMock(RequestConstraintFactory::class), new ValidationRules([])]
+            )
+            ->enableProxyingToOriginalMethods()
+            ->getMock();
     }
 
     /**
@@ -60,11 +77,10 @@ class RequestValidationSubscriberTest extends TestCase
      */
     public function testHandleArgumentsAbstractValidatedRequestShouldPass(): void
     {
-        $request = $this->createMock(MockValidatedRequest::class);
-        $request->expects(self::once())->method('validate')->willReturn(null);
+        $this->validatedRequest->setValidateCustomRulesResult(null);
 
         try {
-            $this->subscriber->handleArguments($this->createArgumentsEvent([$request]));
+            $this->subscriber->handleArguments($this->createArgumentsEvent([$this->validatedRequest]));
             $success = true;
         } catch (Exception $e) {
             $success = false;
@@ -78,12 +94,11 @@ class RequestValidationSubscriberTest extends TestCase
      */
     public function testHandleArgumentsShouldThrowException(): void
     {
-        $request = $this->createMock(MockValidatedRequest::class);
-        $request->expects(self::once())->method('validate')->willReturn(new InvalidArgumentException('foobar'));
+        $this->validatedRequest->expects(self::once())->method('validateCustomRules')->willThrowException(new BadRequestException('foobar'));
 
-        $this->expectException(InvalidArgumentException::class);
+        $this->expectException(BadRequestException::class);
         $this->expectExceptionMessage('foobar');
-        $this->subscriber->handleArguments($this->createArgumentsEvent([$request]));
+        $this->subscriber->handleArguments($this->createArgumentsEvent([$this->validatedRequest]));
     }
 
     /**
@@ -94,10 +109,9 @@ class RequestValidationSubscriberTest extends TestCase
     {
         $response = new Response();
 
-        $request = $this->createMock(MockValidatedRequest::class);
-        $request->expects(self::once())->method('validate')->willReturn($response);
+        $this->validatedRequest->setValidateCustomRulesResult($response);
 
-        $event = $this->createArgumentsEvent([$request]);
+        $event = $this->createArgumentsEvent([$this->validatedRequest]);
         $this->subscriber->handleArguments($event);
 
         static::assertSame($response, ($event->getController())());
