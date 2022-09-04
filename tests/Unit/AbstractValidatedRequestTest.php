@@ -4,12 +4,15 @@ declare(strict_types=1);
 namespace DigitalRevolution\SymfonyRequestValidation\Tests\Unit;
 
 use DigitalRevolution\SymfonyRequestValidation\Constraint\RequestConstraint;
+use DigitalRevolution\SymfonyRequestValidation\Constraint\RequestConstraintFactory;
 use DigitalRevolution\SymfonyRequestValidation\InvalidRequestException;
 use DigitalRevolution\SymfonyRequestValidation\Tests\Mock\MockValidatedRequest;
 use DigitalRevolution\SymfonyRequestValidation\ValidationRules;
+use DigitalRevolution\SymfonyValidationShorthand\ConstraintFactory;
 use DigitalRevolution\SymfonyValidationShorthand\Rule\InvalidRuleException;
 use Exception;
 use PHPUnit\Framework\TestCase;
+use Symfony\Component\HttpFoundation\Exception\BadRequestException;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\Validator\Constraints\Collection;
@@ -32,9 +35,9 @@ class AbstractValidatedRequestTest extends TestCase
     {
         $stack = new RequestStack();
 
-        $this->expectException(InvalidRequestException::class);
+        $this->expectException(BadRequestException::class);
         $this->expectExceptionMessage("Request is 'null', unable to validate");
-        new MockValidatedRequest($stack, Validation::createValidator());
+        new MockValidatedRequest($stack, Validation::createValidator(), new RequestConstraintFactory(new ConstraintFactory()));
     }
 
     /**
