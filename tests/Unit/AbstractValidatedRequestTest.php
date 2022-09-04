@@ -3,14 +3,12 @@ declare(strict_types=1);
 
 namespace DigitalRevolution\SymfonyRequestValidation\Tests\Unit;
 
-use DigitalRevolution\SymfonyRequestValidation\Constraint\RequestConstraint;
 use DigitalRevolution\SymfonyRequestValidation\Constraint\RequestConstraintFactory;
-use DigitalRevolution\SymfonyRequestValidation\InvalidRequestException;
 use DigitalRevolution\SymfonyRequestValidation\Tests\Mock\MockValidatedRequest;
 use DigitalRevolution\SymfonyRequestValidation\ValidationRules;
-use DigitalRevolution\SymfonyValidationShorthand\ConstraintFactory;
 use DigitalRevolution\SymfonyValidationShorthand\Rule\InvalidRuleException;
 use Exception;
+use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\HttpFoundation\Exception\BadRequestException;
 use Symfony\Component\HttpFoundation\Request;
@@ -19,14 +17,26 @@ use Symfony\Component\Validator\Constraints\Collection;
 use Symfony\Component\Validator\Constraints\NotBlank;
 use Symfony\Component\Validator\ConstraintViolation;
 use Symfony\Component\Validator\ConstraintViolationList;
-use Symfony\Component\Validator\Validation;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 /**
  * @coversDefaultClass \DigitalRevolution\SymfonyRequestValidation\AbstractValidatedRequest
+ * @covers ::__construct
  */
 class AbstractValidatedRequestTest extends TestCase
 {
+    /** @var RequestConstraintFactory&MockObject */
+    private RequestConstraintFactory $constraintFactory;
+    /** @var ValidatorInterface&MockObject */
+    private ValidatorInterface $validator;
+
+    protected function setUp(): void
+    {
+        parent::setUp();
+        $this->constraintFactory = $this->createMock(RequestConstraintFactory::class);
+        $this->validator         = $this->createMock(ValidatorInterface::class);
+    }
+
     /**
      * @covers ::__construct
      * @throws Exception
@@ -37,17 +47,16 @@ class AbstractValidatedRequestTest extends TestCase
 
         $this->expectException(BadRequestException::class);
         $this->expectExceptionMessage("Request is 'null', unable to validate");
-        new MockValidatedRequest($stack, Validation::createValidator(), new RequestConstraintFactory(new ConstraintFactory()));
+        new MockValidatedRequest($stack, $this->validator, $this->constraintFactory);
     }
 
     /**
-     * @covers ::__construct
      * @covers ::validate
      * @covers ::isValid
      * @covers ::getRequest
      * @throws Exception
      */
-    public function testConstructorWithoutViolations(): void
+    public function testValidateWithoutViolations(): void
     {
         $request = new Request();
         $stack   = new RequestStack();
@@ -55,7 +64,9 @@ class AbstractValidatedRequestTest extends TestCase
 
         $rules = new ValidationRules([]);
 
-        $validatedRequest = new MockValidatedRequest($stack, Validation::createValidator(), $rules);
+        $this->validator->expects(self::once())->method('validate')->willReturn(new ConstraintViolationList());
+
+        $validatedRequest = new MockValidatedRequest($stack, $this->validator, $this->constraintFactory, $rules);
         static::assertNull($validatedRequest->validate());
         static::assertTrue($validatedRequest->isValid());
         static::assertSame($request, $validatedRequest->getRequest());
@@ -65,7 +76,7 @@ class AbstractValidatedRequestTest extends TestCase
      * @covers ::__construct
      * @covers ::validate
      * @covers ::handleViolations
-     * @throws InvalidRequestException|InvalidRuleException
+     * @throws BadRequestException|InvalidRuleException
      */
     public function testConstructorWithViolations(): void
     {
@@ -82,15 +93,13 @@ class AbstractValidatedRequestTest extends TestCase
         $violations->add($this->createMock(ConstraintViolation::class));
 
         // create validator
-        $validator = $this->createMock(ValidatorInterface::class);
-        $validator
+        $this->validator
             ->expects(self::once())
             ->method('validate')
-            ->with(...[$request, new RequestConstraint(['request' => $constraint])])
             ->willReturn($violations);
 
-        $validatedRequest = new MockValidatedRequest($stack, $validator, $rules);
-        $exception        = $validatedRequest->validate();
-        static::assertInstanceOf(InvalidRequestException::class, $exception);
+        $validatedRequest = new MockValidatedRequest($stack, $this->validator, $this->constraintFactory, $rules);
+        $this->expectException(BadRequestException::class);
+        $validatedRequest->validate();
     }
 }
