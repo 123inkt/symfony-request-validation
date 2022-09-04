@@ -32,10 +32,6 @@ class RequestValidationSubscriber implements EventSubscriberInterface
             }
 
             $result = $argument->validate();
-            if ($result instanceof Exception) {
-                throw $result;
-            }
-
             if ($result instanceof Response) {
                 $event->setController(fn() => $result);
                 break;
