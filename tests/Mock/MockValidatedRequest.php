@@ -6,6 +6,7 @@ namespace DigitalRevolution\SymfonyRequestValidation\Tests\Mock;
 use DigitalRevolution\SymfonyRequestValidation\AbstractValidatedRequest;
 use DigitalRevolution\SymfonyRequestValidation\Constraint\RequestConstraintFactory;
 use DigitalRevolution\SymfonyRequestValidation\ValidationRules;
+use Exception;
 use RuntimeException;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpFoundation\Response;
@@ -13,8 +14,9 @@ use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 class MockValidatedRequest extends AbstractValidatedRequest
 {
-    private ?ValidationRules $rules    = null;
-    private ?Response        $response = null;
+    private ?ValidationRules $rules;
+    /** @var Response|Exception|null */
+    private $result = null;
 
     public function __construct(
         RequestStack             $requestStack,
@@ -37,16 +39,24 @@ class MockValidatedRequest extends AbstractValidatedRequest
         return $this->rules;
     }
 
-    public function setValidateCustomRulesResult(?Response $response): void
+    /**
+     * @param Response|Exception|null $result
+     */
+    public function setValidateCustomRulesResult($result): void
     {
-        $this->response = $response;
+        $this->result = $result;
     }
 
     /**
      * Upgrade protected to public
+     * @throws Exception
      */
     public function validateCustomRules(): ?Response
     {
-        return $this->response;
+        if ($this->result instanceof Exception) {
+            throw $this->result;
+        }
+
+        return $this->result;
     }
 }

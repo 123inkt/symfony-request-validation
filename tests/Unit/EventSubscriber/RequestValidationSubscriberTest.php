@@ -26,8 +26,7 @@ use Symfony\Component\Validator\Validator\ValidatorInterface;
 class RequestValidationSubscriberTest extends TestCase
 {
     /** @var HttpKernelInterface&MockObject */
-    private HttpKernelInterface $kernel;
-    /** @var MockValidatedRequest&MockObject */
+    private HttpKernelInterface         $kernel;
     private MockValidatedRequest        $validatedRequest;
     private Request                     $request;
     private RequestValidationSubscriber $subscriber;
@@ -37,17 +36,16 @@ class RequestValidationSubscriberTest extends TestCase
         parent::setUp();
         $this->kernel     = $this->createMock(HttpKernelInterface::class);
         $this->subscriber = new RequestValidationSubscriber();
-        $this->request = new Request();
+        $this->request    = new Request();
 
         $stack = new RequestStack();
         $stack->push($this->request);
-        $this->validatedRequest = $this->getMockBuilder(MockValidatedRequest::class)
-            ->enableOriginalConstructor()
-            ->setConstructorArgs(
-                [$stack, $this->createMock(ValidatorInterface::class), $this->createMock(RequestConstraintFactory::class), new ValidationRules([])]
-            )
-            ->enableProxyingToOriginalMethods()
-            ->getMock();
+        $this->validatedRequest = new MockValidatedRequest(
+            $stack,
+            $this->createMock(ValidatorInterface::class),
+            $this->createMock(RequestConstraintFactory::class),
+            new ValidationRules([])
+        );
     }
 
     /**
@@ -94,7 +92,7 @@ class RequestValidationSubscriberTest extends TestCase
      */
     public function testHandleArgumentsShouldThrowException(): void
     {
-        $this->validatedRequest->expects(self::once())->method('validateCustomRules')->willThrowException(new BadRequestException('foobar'));
+        $this->validatedRequest->setValidateCustomRulesResult(new BadRequestException('foobar'));
 
         $this->expectException(BadRequestException::class);
         $this->expectExceptionMessage('foobar');
