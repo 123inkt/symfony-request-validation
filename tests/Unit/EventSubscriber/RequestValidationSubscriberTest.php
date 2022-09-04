@@ -18,6 +18,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Event\ControllerArgumentsEvent;
 use Symfony\Component\HttpKernel\HttpKernelInterface;
 use Symfony\Component\HttpKernel\KernelEvents;
+use Symfony\Component\Validator\ConstraintViolationList;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 /**
@@ -38,11 +39,14 @@ class RequestValidationSubscriberTest extends TestCase
         $this->subscriber = new RequestValidationSubscriber();
         $this->request    = new Request();
 
+        $validator = $this->createMock(ValidatorInterface::class);
+        $validator->method('validate')->willReturn(new ConstraintViolationList());
+
         $stack = new RequestStack();
         $stack->push($this->request);
         $this->validatedRequest = new MockValidatedRequest(
             $stack,
-            $this->createMock(ValidatorInterface::class),
+            $validator,
             $this->createMock(RequestConstraintFactory::class),
             new ValidationRules([])
         );
