@@ -13,6 +13,7 @@ use PHPUnit\Framework\TestCase;
 use Symfony\Component\HttpFoundation\Exception\BadRequestException;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Validator\Constraints\Collection;
 use Symfony\Component\Validator\Constraints\NotBlank;
 use Symfony\Component\Validator\ConstraintViolation;
@@ -101,5 +102,28 @@ class AbstractValidatedRequestTest extends TestCase
         $validatedRequest = new MockValidatedRequest($stack, $this->validator, $this->constraintFactory, $rules);
         $this->expectException(BadRequestException::class);
         $validatedRequest->validate();
+    }
+
+    /**
+     * @covers ::validate
+     * @covers ::isValid
+     * @throws Exception
+     */
+    public function testValidateWithCustomValidation(): void
+    {
+        $request = new Request();
+        $stack   = new RequestStack();
+        $stack->push($request);
+        $response = new Response();
+
+        $rules = new ValidationRules([]);
+
+        $this->validator->expects(self::once())->method('validate')->willReturn(new ConstraintViolationList());
+
+        $validatedRequest = new MockValidatedRequest($stack, $this->validator, $this->constraintFactory, $rules);
+        $validatedRequest->setValidateCustomRulesResult($response);
+
+        static::assertSame($response, $validatedRequest->validate());
+        static::assertFalse($validatedRequest->isValid());
     }
 }

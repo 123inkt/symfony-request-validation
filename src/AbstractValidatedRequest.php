@@ -58,11 +58,9 @@ abstract class AbstractValidatedRequest
         }
 
         $response = $this->validateCustomRules();
-        // @codeCoverageIgnoreStart
         if ($response instanceof Response) {
             return $response;
         }
-        // @codeCoverageIgnoreEnd
 
         $this->isValid = true;
 
