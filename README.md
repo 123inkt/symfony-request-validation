@@ -7,8 +7,16 @@ A request validation component for Symfony. Ease the validation of request prope
 
 ## Installation
 Include the library as dependency in your own project via: 
-```
+```bash
 composer require "digitalrevolution/symfony-request-validation"
+```
+
+Update `/config/bundles.php`:
+```php
+return [
+    ...
+    DigitalRevolution\SymfonyRequestValidation\Bundle\RequestValidationBundle::class => ['all' => true],
+];
 ```
 
 ## Usage

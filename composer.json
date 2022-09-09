@@ -22,8 +22,11 @@
     },
     "require": {
         "php": ">=7.4",
-        "symfony/http-foundation": "^5.0 || ^6.0",
-        "symfony/validator": "^5.0 || ^6.0",
+        "symfony/config": "^5.4 || ^6.0",
+        "symfony/dependency-injection": "^5.4 || ^6.0",
+        "symfony/http-foundation": "^5.4 || ^6.0",
+        "symfony/http-kernel": "^5.4 || ^6.0",
+        "symfony/validator": "^5.4 || ^6.0",
         "digitalrevolution/symfony-validation-shorthand": "^1.0.4"
     },
     "require-dev": {
@@ -35,6 +38,7 @@
         "phpstan/phpstan": "^1.4",
         "phpstan/phpstan-phpunit": "^1.0",
         "phpstan/phpstan-strict-rules": "^1.1",
+        "phpstan/phpstan-symfony": "^1.2",
         "phpstan/extension-installer": "^1.1"
     },
     "scripts": {

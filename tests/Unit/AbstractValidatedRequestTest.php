@@ -3,27 +3,41 @@ declare(strict_types=1);
 
 namespace DigitalRevolution\SymfonyRequestValidation\Tests\Unit;
 
-use DigitalRevolution\SymfonyRequestValidation\Constraint\RequestConstraint;
-use DigitalRevolution\SymfonyRequestValidation\InvalidRequestException;
+use DigitalRevolution\SymfonyRequestValidation\Constraint\RequestConstraintFactory;
 use DigitalRevolution\SymfonyRequestValidation\Tests\Mock\MockValidatedRequest;
 use DigitalRevolution\SymfonyRequestValidation\ValidationRules;
 use DigitalRevolution\SymfonyValidationShorthand\Rule\InvalidRuleException;
 use Exception;
+use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
+use Symfony\Component\HttpFoundation\Exception\BadRequestException;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Validator\Constraints\Collection;
 use Symfony\Component\Validator\Constraints\NotBlank;
 use Symfony\Component\Validator\ConstraintViolation;
 use Symfony\Component\Validator\ConstraintViolationList;
-use Symfony\Component\Validator\Validation;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 /**
  * @coversDefaultClass \DigitalRevolution\SymfonyRequestValidation\AbstractValidatedRequest
+ * @covers ::__construct
  */
 class AbstractValidatedRequestTest extends TestCase
 {
+    /** @var RequestConstraintFactory&MockObject */
+    private RequestConstraintFactory $constraintFactory;
+    /** @var ValidatorInterface&MockObject */
+    private ValidatorInterface $validator;
+
+    protected function setUp(): void
+    {
+        parent::setUp();
+        $this->constraintFactory = $this->createMock(RequestConstraintFactory::class);
+        $this->validator         = $this->createMock(ValidatorInterface::class);
+    }
+
     /**
      * @covers ::__construct
      * @throws Exception
@@ -32,19 +46,18 @@ class AbstractValidatedRequestTest extends TestCase
     {
         $stack = new RequestStack();
 
-        $this->expectException(InvalidRequestException::class);
+        $this->expectException(BadRequestException::class);
         $this->expectExceptionMessage("Request is 'null', unable to validate");
-        new MockValidatedRequest($stack, Validation::createValidator());
+        new MockValidatedRequest($stack, $this->validator, $this->constraintFactory);
     }
 
     /**
-     * @covers ::__construct
      * @covers ::validate
      * @covers ::isValid
      * @covers ::getRequest
      * @throws Exception
      */
-    public function testConstructorWithoutViolations(): void
+    public function testValidateWithoutViolations(): void
     {
         $request = new Request();
         $stack   = new RequestStack();
@@ -52,7 +65,10 @@ class AbstractValidatedRequestTest extends TestCase
 
         $rules = new ValidationRules([]);
 
-        $validatedRequest = new MockValidatedRequest($stack, Validation::createValidator(), $rules);
+        $this->validator->expects(self::once())->method('validate')->willReturn(new ConstraintViolationList());
+
+        $validatedRequest = new MockValidatedRequest($stack, $this->validator, $this->constraintFactory, $rules);
+        static::assertNull($validatedRequest->validate());
         static::assertTrue($validatedRequest->isValid());
         static::assertSame($request, $validatedRequest->getRequest());
     }
@@ -61,9 +77,9 @@ class AbstractValidatedRequestTest extends TestCase
      * @covers ::__construct
      * @covers ::validate
      * @covers ::handleViolations
-     * @throws InvalidRequestException|InvalidRuleException
+     * @throws BadRequestException|InvalidRuleException
      */
-    public function testConstructorWithViolations(): void
+    public function testValidateWithViolations(): void
     {
         $request = new Request();
         $stack   = new RequestStack();
@@ -78,14 +94,55 @@ class AbstractValidatedRequestTest extends TestCase
         $violations->add($this->createMock(ConstraintViolation::class));
 
         // create validator
-        $validator = $this->createMock(ValidatorInterface::class);
-        $validator
+        $this->validator
             ->expects(self::once())
             ->method('validate')
-            ->with(...[$request, new RequestConstraint(['request' => $constraint])])
             ->willReturn($violations);
 
-        $this->expectException(InvalidRequestException::class);
-        new MockValidatedRequest($stack, $validator, $rules);
+        $validatedRequest = new MockValidatedRequest($stack, $this->validator, $this->constraintFactory, $rules);
+        $this->expectException(BadRequestException::class);
+        $validatedRequest->validate();
+    }
+
+    /**
+     * @covers ::validate
+     * @covers ::isValid
+     * @throws Exception
+     */
+    public function testValidateWithoutValidationRules(): void
+    {
+        $request = new Request();
+        $stack   = new RequestStack();
+        $stack->push($request);
+
+        $this->validator->expects(self::never())->method('validate');
+
+        $validatedRequest = new MockValidatedRequest($stack, $this->validator, $this->constraintFactory, null);
+
+        static::assertNull($validatedRequest->validate());
+        static::assertTrue($validatedRequest->isValid());
+    }
+
+    /**
+     * @covers ::validate
+     * @covers ::isValid
+     * @throws Exception
+     */
+    public function testValidateWithCustomValidation(): void
+    {
+        $request = new Request();
+        $stack   = new RequestStack();
+        $stack->push($request);
+        $response = new Response();
+
+        $rules = new ValidationRules([]);
+
+        $this->validator->expects(self::once())->method('validate')->willReturn(new ConstraintViolationList());
+
+        $validatedRequest = new MockValidatedRequest($stack, $this->validator, $this->constraintFactory, $rules);
+        $validatedRequest->setValidateCustomRulesResult($response);
+
+        static::assertSame($response, $validatedRequest->validate());
+        static::assertFalse($validatedRequest->isValid());
     }
 }
