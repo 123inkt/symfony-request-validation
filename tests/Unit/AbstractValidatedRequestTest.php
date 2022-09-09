@@ -79,7 +79,7 @@ class AbstractValidatedRequestTest extends TestCase
      * @covers ::handleViolations
      * @throws BadRequestException|InvalidRuleException
      */
-    public function testConstructorWithViolations(): void
+    public function testValidateWithViolations(): void
     {
         $request = new Request();
         $stack   = new RequestStack();
@@ -102,6 +102,25 @@ class AbstractValidatedRequestTest extends TestCase
         $validatedRequest = new MockValidatedRequest($stack, $this->validator, $this->constraintFactory, $rules);
         $this->expectException(BadRequestException::class);
         $validatedRequest->validate();
+    }
+
+    /**
+     * @covers ::validate
+     * @covers ::isValid
+     * @throws Exception
+     */
+    public function testValidateWithoutValidationRules(): void
+    {
+        $request = new Request();
+        $stack   = new RequestStack();
+        $stack->push($request);
+
+        $this->validator->expects(self::never())->method('validate');
+
+        $validatedRequest = new MockValidatedRequest($stack, $this->validator, $this->constraintFactory, null);
+
+        static::assertNull($validatedRequest->validate());
+        static::assertTrue($validatedRequest->isValid());
     }
 
     /**

@@ -19,10 +19,10 @@ class MockValidatedRequest extends AbstractValidatedRequest
     private $result = null;
 
     public function __construct(
-        RequestStack             $requestStack,
-        ValidatorInterface       $validator,
+        RequestStack $requestStack,
+        ValidatorInterface $validator,
         RequestConstraintFactory $constraintFactory,
-        ValidationRules          $rules = null
+        ?ValidationRules $rules = null
     ) {
         $this->rules = $rules;
         parent::__construct($requestStack, $validator, $constraintFactory);
@@ -31,11 +31,8 @@ class MockValidatedRequest extends AbstractValidatedRequest
     /**
      * @inheritDoc
      */
-    protected function getValidationRules(): ValidationRules
+    protected function getValidationRules(): ?ValidationRules
     {
-        if ($this->rules === null) {
-            throw new RuntimeException('ValidationRules not set');
-        }
         return $this->rules;
     }
 

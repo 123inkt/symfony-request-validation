@@ -52,9 +52,12 @@ abstract class AbstractValidatedRequest
      */
     final public function validate(): ?Response
     {
-        $violationList = $this->validator->validate($this->request, $this->constraintFactory->createConstraint($this->getValidationRules()));
-        if (count($violationList) > 0) {
-            return $this->handleViolations($violationList);
+        $rules = $this->getValidationRules();
+        if ($rules !== null) {
+            $violationList = $this->validator->validate($this->request, $this->constraintFactory->createConstraint($rules));
+            if (count($violationList) > 0) {
+                return $this->handleViolations($violationList);
+            }
         }
 
         $response = $this->validateCustomRules();
@@ -70,7 +73,7 @@ abstract class AbstractValidatedRequest
     /**
      * Get all the constraints for the current query params
      */
-    abstract protected function getValidationRules(): ValidationRules;
+    abstract protected function getValidationRules(): ?ValidationRules;
 
     /**
      * Override this function to validate addition custom validation rules after the standard Symfony rules have been validated.
