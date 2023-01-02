@@ -37,7 +37,6 @@ class RequestConstraintValidator extends ConstraintValidator
 
         $this->validateQuery($constraint, $value);
         $this->validateRequest($constraint, $value);
-        $this->validateJson($constraint, $value);
         $this->validateAttributes($constraint, $value);
     }
 
@@ -58,6 +57,15 @@ class RequestConstraintValidator extends ConstraintValidator
 
     private function validateRequest(RequestConstraint $constraint, Request $value): void
     {
+        if (in_array($value->getContentType(), ['json', 'jsonld'], true)) {
+            $this->validateJsonBody($constraint, $value);
+        } else {
+            $this->validateUrlEncodedBody($constraint, $value);
+        }
+    }
+
+    private function validateUrlEncodedBody(RequestConstraint $constraint, Request $value): void
+    {
         if ($constraint->request !== null) {
             $this->context->getValidator()
                 ->inContext($this->context)
@@ -71,21 +79,20 @@ class RequestConstraintValidator extends ConstraintValidator
         }
     }
 
-    private function validateJson(RequestConstraint $constraint, Request $value): void
+    private function validateJsonBody(RequestConstraint $constraint, Request $value): void
     {
-        if ($constraint->json === null) {
+        if ($constraint->request === null) {
             return;
         }
-        $content = $value->getContent();
         try {
-            $json = json_decode($content, true, 512, JSON_THROW_ON_ERROR);
+            $json = json_decode($value->getContent(), true, 512, JSON_THROW_ON_ERROR);
         } catch (JsonException $exception) {
             $this->context->addViolation('The body is not valid json');
 
             return;
         }
 
-        $this->context->getValidator()->inContext($this->context)->atPath('[json]')->validate($json, $constraint->json);
+        $this->context->getValidator()->inContext($this->context)->atPath('[json]')->validate($json, $constraint->request);
     }
 
     private function validateAttributes(RequestConstraint $constraint, Request $value): void
