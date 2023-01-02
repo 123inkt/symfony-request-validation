@@ -84,7 +84,7 @@ class RequestConstraintValidatorTest extends TestCase
      */
     public function testValidateJson(array $data, bool $success): void
     {
-        $request    = new Request([], [], [], [], [], [], (string)json_encode($data, JSON_THROW_ON_ERROR));
+        $request    = new Request([], [], [], [], [], [], json_encode($data, JSON_THROW_ON_ERROR));
         $constraint = new RequestConstraint(['json' => new Assert\Collection(['email' => new Assert\Required(new Assert\Email())])]);
         $this->context->setConstraint($constraint);
         $this->validator->validate($request, $constraint);
