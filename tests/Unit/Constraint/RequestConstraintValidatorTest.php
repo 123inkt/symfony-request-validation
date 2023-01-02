@@ -138,11 +138,13 @@ class RequestConstraintValidatorTest extends TestCase
     public function testValidateQueryRequestAttributes(array $data, bool $success): void
     {
         $request    = new Request($data, $data, $data);
-        $constraint = new RequestConstraint([
-                                                'query'      => new Assert\Collection(['email' => new Assert\Required(new Assert\Email())]),
-                                                'request'    => new Assert\Collection(['email' => new Assert\Required(new Assert\Email())]),
-                                                'attributes' => new Assert\Collection(['email' => new Assert\Required(new Assert\Email())])
-                                            ]);
+        $constraint = new RequestConstraint(
+            [
+                'query'      => new Assert\Collection(['email' => new Assert\Required(new Assert\Email())]),
+                'request'    => new Assert\Collection(['email' => new Assert\Required(new Assert\Email())]),
+                'attributes' => new Assert\Collection(['email' => new Assert\Required(new Assert\Email())])
+            ]
+        );
         $this->context->setConstraint($constraint);
         $this->validator->validate($request, $constraint);
         static::assertCount($success ? 0 : 3, $this->context->getViolations());
