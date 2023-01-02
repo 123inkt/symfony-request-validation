@@ -3,7 +3,6 @@ declare(strict_types=1);
 
 namespace DigitalRevolution\SymfonyRequestValidation\Constraint;
 
-use DR\DRCore\Lib\Serialize\Json;
 use JsonException;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Validator\Constraint;
@@ -82,12 +81,6 @@ class RequestConstraintValidator extends ConstraintValidator
             $json = json_decode($content, true, 512, JSON_THROW_ON_ERROR);
         } catch (JsonException $exception) {
             $this->context->addViolation('The body is not valid json');
-
-            return;
-        }
-
-        if (is_array($json) === false) {
-            $this->context->addViolation('The json body should be array');
 
             return;
         }

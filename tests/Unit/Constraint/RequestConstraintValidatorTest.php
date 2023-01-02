@@ -111,23 +111,6 @@ class RequestConstraintValidatorTest extends TestCase
     }
 
     /**
-     * @covers ::validate
-     * @covers ::validateJson
-     * @throws JsonException
-     */
-    public function testValidateJsonIsArray(): void
-    {
-        $request    = new Request([], [], [], [], [], [], json_encode('string', JSON_THROW_ON_ERROR));
-        $constraint = new RequestConstraint(['json' => new Assert\Collection(['email' => new Assert\Required(new Assert\Email())])]);
-        $this->context->setConstraint($constraint);
-        $this->validator->validate($request, $constraint);
-
-        $violations = $this->context->getViolations();
-        static::assertCount(1, $violations);
-        static::assertSame('The json body should be array', $violations->get(0)->getMessageTemplate());
-    }
-
-    /**
      * @param array<mixed> $data
      *
      * @dataProvider \DigitalRevolution\SymfonyRequestValidation\Tests\DataProvider\Constraint\RequestConstraintValidatorDataProvider::dataProvider
