@@ -77,6 +77,21 @@ class RequestConstraintValidatorTest extends TestCase
      * @param array<mixed> $data
      * @dataProvider \DigitalRevolution\SymfonyRequestValidation\Tests\DataProvider\Constraint\RequestConstraintValidatorDataProvider::dataProvider
      * @covers ::validate
+     * @covers ::validateJson
+     */
+    public function testValidateJson(array $data, bool $success): void
+    {
+        $request    = new Request([], [], [], [], [], [], json_encode($data));
+        $constraint = new RequestConstraint(['json' => new Assert\Collection(['email' => new Assert\Required(new Assert\Email())])]);
+        $this->context->setConstraint($constraint);
+        $this->validator->validate($request, $constraint);
+        static::assertCount($success ? 0 : 1, $this->context->getViolations());
+    }
+
+    /**
+     * @param array<mixed> $data
+     * @dataProvider \DigitalRevolution\SymfonyRequestValidation\Tests\DataProvider\Constraint\RequestConstraintValidatorDataProvider::dataProvider
+     * @covers ::validate
      * @covers ::validateAttributes
      */
     public function testValidateAttributes(array $data, bool $success): void
