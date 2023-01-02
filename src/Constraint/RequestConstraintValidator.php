@@ -3,6 +3,8 @@ declare(strict_types=1);
 
 namespace DigitalRevolution\SymfonyRequestValidation\Constraint;
 
+use DR\DRCore\Lib\Serialize\Json;
+use JsonException;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\ConstraintValidator;
@@ -12,6 +14,7 @@ class RequestConstraintValidator extends ConstraintValidator
 {
     /**
      * @param mixed $value
+     *
      * @inheritDoc
      */
     public function validate($value, Constraint $constraint): void
@@ -35,6 +38,7 @@ class RequestConstraintValidator extends ConstraintValidator
 
         $this->validateQuery($constraint, $value);
         $this->validateRequest($constraint, $value);
+        $this->validateJson($constraint, $value);
         $this->validateAttributes($constraint, $value);
     }
 
@@ -66,6 +70,29 @@ class RequestConstraintValidator extends ConstraintValidator
                 ->setCode($constraint::MISSING_REQUEST_CONSTRAINT)
                 ->addViolation();
         }
+    }
+
+    private function validateJson(RequestConstraint $constraint, Request $value): void
+    {
+        if ($constraint->json === null) {
+            return;
+        }
+        $content = $value->getContent();
+        try {
+            $json = json_decode($content, true, 512, JSON_THROW_ON_ERROR);
+        } catch (JsonException $exception) {
+            $this->context->addViolation('The body is not valid json');
+
+            return;
+        }
+
+        if (is_array($json) === false) {
+            $this->context->addViolation('The json body should be array');
+
+            return;
+        }
+
+        $this->context->getValidator()->inContext($this->context)->atPath('[json]')->validate($json, $constraint->json);
     }
 
     private function validateAttributes(RequestConstraint $constraint, Request $value): void

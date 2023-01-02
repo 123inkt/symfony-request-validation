@@ -32,6 +32,7 @@ class RequestConstraintFactory
          * @var array{
          *     query?: Constraint|Constraint[],
          *     request?: Constraint|Constraint[],
+         *     json?: Constraint|Constraint[],
          *     attributes?: Constraint|Constraint[],
          *     allowExtraFields: bool
          * } $options

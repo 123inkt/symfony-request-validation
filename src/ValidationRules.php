@@ -8,7 +8,7 @@ use Symfony\Component\Validator\Constraint;
 
 /**
  * @phpstan-type ConstraintList array<string, string|Constraint|array<string|Constraint>>
- * @phpstan-type DefinitionCollection array{query?: ConstraintList, request?: ConstraintList, attributes?: ConstraintList }
+ * @phpstan-type DefinitionCollection array{query?: ConstraintList, request?: ConstraintList, json?: ConstraintList, attributes?: ConstraintList}
  */
 class ValidationRules
 {
@@ -24,8 +24,8 @@ class ValidationRules
     public function __construct(array $definitions, bool $allowExtraFields = false)
     {
         // expect no other keys than `query` or `request`
-        if (count(array_diff(array_keys($definitions), ['query', 'request', 'attributes'])) > 0) {
-            throw new InvalidArgumentException('Expecting at most `query`, `request` or `attribute` property to be set');
+        if (count(array_diff(array_keys($definitions), ['query', 'request', 'json', 'attributes'])) > 0) {
+            throw new InvalidArgumentException('Expecting at most `query`, `request`, `json` or `attribute` property to be set');
         }
 
         $this->definitions      = $definitions;

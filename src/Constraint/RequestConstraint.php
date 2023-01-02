@@ -32,6 +32,9 @@ class RequestConstraint extends Constraint
     public $request;
 
     /** @var Constraint|Constraint[]|null */
+    public $json;
+
+    /** @var Constraint|Constraint[]|null */
     public $attributes;
 
     /** @var bool */
@@ -41,6 +44,7 @@ class RequestConstraint extends Constraint
      * @param array{
      *     query?: Constraint|Constraint[],
      *     request?: Constraint|Constraint[],
+     *     json?: Constraint|Constraint[],
      *     attributes?: Constraint|Constraint[],
      *     allowExtraFields?: bool
      *     }|null $options
@@ -51,6 +55,7 @@ class RequestConstraint extends Constraint
         $options                     = $options ?? [];
         $options['query']            = $options['query'] ?? null;
         $options['request']          = $options['request'] ?? null;
+        $options['json']             = $options['json'] ?? null;
         $options['attributes']       = $options['attributes'] ?? null;
         $options['allowExtraFields'] = $options['allowExtraFields'] ?? false;
 
@@ -59,6 +64,6 @@ class RequestConstraint extends Constraint
 
     public function getRequiredOptions(): array
     {
-        return ['query', 'request', 'attributes', 'allowExtraFields'];
+        return ['query', 'request', 'json', 'attributes', 'allowExtraFields'];
     }
 }
