@@ -5,6 +5,7 @@ namespace DigitalRevolution\SymfonyRequestValidation\Tests\Unit\Constraint;
 
 use DigitalRevolution\SymfonyRequestValidation\Constraint\RequestConstraint;
 use DigitalRevolution\SymfonyRequestValidation\Constraint\RequestConstraintValidator;
+use JsonException;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Validator\Constraints as Assert;
@@ -75,13 +76,15 @@ class RequestConstraintValidatorTest extends TestCase
 
     /**
      * @param array<mixed> $data
+     *
      * @dataProvider \DigitalRevolution\SymfonyRequestValidation\Tests\DataProvider\Constraint\RequestConstraintValidatorDataProvider::dataProvider
      * @covers ::validate
      * @covers ::validateJson
+     * @throws JsonException
      */
     public function testValidateJson(array $data, bool $success): void
     {
-        $request    = new Request([], [], [], [], [], [], json_encode($data));
+        $request    = new Request([], [], [], [], [], [], (string)json_encode($data, JSON_THROW_ON_ERROR));
         $constraint = new RequestConstraint(['json' => new Assert\Collection(['email' => new Assert\Required(new Assert\Email())])]);
         $this->context->setConstraint($constraint);
         $this->validator->validate($request, $constraint);
