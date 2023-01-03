@@ -5,8 +5,8 @@ namespace DigitalRevolution\SymfonyRequestValidation\Tests\Unit\Constraint;
 
 use DigitalRevolution\SymfonyRequestValidation\Constraint\RequestConstraint;
 use DigitalRevolution\SymfonyRequestValidation\Constraint\RequestConstraintValidator;
-use JsonException;
 use PHPUnit\Framework\TestCase;
+use Symfony\Component\HttpFoundation\Exception\JsonException;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Component\Validator\Context\ExecutionContext;
@@ -66,7 +66,6 @@ class RequestConstraintValidatorTest extends TestCase
      * @dataProvider \DigitalRevolution\SymfonyRequestValidation\Tests\DataProvider\Constraint\RequestConstraintValidatorDataProvider::dataProvider
      * @covers ::validate
      * @covers ::validateRequest
-     * @covers ::validateJsonBody
      */
     public function testValidateRequest(array $data, bool $success): void
     {
@@ -83,7 +82,6 @@ class RequestConstraintValidatorTest extends TestCase
      * @dataProvider \DigitalRevolution\SymfonyRequestValidation\Tests\DataProvider\Constraint\RequestConstraintValidatorDataProvider::dataProvider
      * @covers ::validate
      * @covers ::validateRequest
-     * @covers ::validateUrlEncodedBody
      * @throws JsonException
      */
     public function testValidateJson(array $data, bool $success): void
@@ -98,18 +96,15 @@ class RequestConstraintValidatorTest extends TestCase
     /**
      * @covers ::validate
      * @covers ::validateRequest
-     * @covers ::validateJsonBody
      */
     public function testValidateInvalidJson(): void
     {
         $request    = new Request([], [], [], [], [], ['HTTP_CONTENT_TYPE' => 'application/json'], '{invalid');
         $constraint = new RequestConstraint(['request' => new Assert\Collection(['email' => new Assert\Required(new Assert\Email())])]);
         $this->context->setConstraint($constraint);
-        $this->validator->validate($request, $constraint);
 
-        $violations = $this->context->getViolations();
-        static::assertCount(1, $violations);
-        static::assertSame('The body is not valid json', $violations->get(0)->getMessageTemplate());
+        $this->expectException(JsonException::class);
+        $this->validator->validate($request, $constraint);
     }
 
     /**
@@ -256,7 +251,5 @@ class RequestConstraintValidatorTest extends TestCase
         $this->context->setConstraint($constraint);
         $this->validator->validate($request, $constraint);
         static::assertCount(0, $this->context->getViolations());
-
-
     }
 }
