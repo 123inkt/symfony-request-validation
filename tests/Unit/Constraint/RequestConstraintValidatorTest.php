@@ -102,9 +102,11 @@ class RequestConstraintValidatorTest extends TestCase
         $request    = new Request([], [], [], [], [], ['HTTP_CONTENT_TYPE' => 'application/json'], '{invalid');
         $constraint = new RequestConstraint(['request' => new Assert\Collection(['email' => new Assert\Required(new Assert\Email())])]);
         $this->context->setConstraint($constraint);
-
-        $this->expectException(JsonException::class);
         $this->validator->validate($request, $constraint);
+
+        $violations = $this->context->getViolations();
+        static::assertCount(1, $violations);
+        static::assertSame('Request::content cant be decoded', $violations->get(0)->getMessageTemplate());
     }
 
     /**

@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace DigitalRevolution\SymfonyRequestValidation\Constraint;
 
+use Symfony\Component\HttpFoundation\Exception\JsonException;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\ConstraintValidator;
@@ -56,19 +57,36 @@ class RequestConstraintValidator extends ConstraintValidator
 
     private function validateRequest(RequestConstraint $constraint, Request $request): void
     {
-        if ($constraint->request !== null) {
-            $data = in_array($request->getContentType(), ['json', 'jsonld'], true) ? $request->toArray() : $request->request->all();
+        if ($constraint->request === null) {
+            if ($constraint->allowExtraFields === false && count($request->request) > 0) {
+                $this->context->buildViolation($constraint->requestMessage)
+                    ->atPath('[request]')
+                    ->setCode($constraint::MISSING_REQUEST_CONSTRAINT)
+                    ->addViolation();
+            }
 
-            $this->context->getValidator()
-                ->inContext($this->context)
-                ->atPath('[request]')
-                ->validate($data, $constraint->request);
-        } elseif ($constraint->allowExtraFields === false && count($request->request) > 0) {
-            $this->context->buildViolation($constraint->requestMessage)
-                ->atPath('[request]')
-                ->setCode($constraint::MISSING_REQUEST_CONSTRAINT)
-                ->addViolation();
+            return;
         }
+
+        if (in_array($request->getContentType(), ['json', 'jsonld'], true)) {
+            try {
+                $data = $request->toArray();
+            } catch (JsonException $exception) {
+                $this->context->buildViolation($constraint->invalidBodyMessage)
+                    ->atPath('[request]')
+                    ->setCode($constraint::INVALID_BODY_CONTENT)
+                    ->addViolation();
+
+                return;
+            }
+        } else {
+            $data = $request->request->all();
+        }
+
+        $this->context->getValidator()
+            ->inContext($this->context)
+            ->atPath('[request]')
+            ->validate($data, $constraint->request);
     }
 
     private function validateAttributes(RequestConstraint $constraint, Request $request): void
