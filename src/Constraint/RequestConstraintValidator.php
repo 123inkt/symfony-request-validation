@@ -69,14 +69,8 @@ class RequestConstraintValidator extends ConstraintValidator
         }
 
         if (in_array($request->getContentType(), ['json', 'jsonld'], true)) {
-            try {
-                $data = $request->toArray();
-            } catch (JsonException $exception) {
-                $this->context->buildViolation($constraint->invalidBodyMessage)
-                    ->atPath('[request]')
-                    ->setCode($constraint::INVALID_BODY_CONTENT)
-                    ->addViolation();
-
+            $data = $this->validateAndGetJsonBody($constraint, $request);
+            if ($data === null) {
                 return;
             }
         } else {
@@ -87,6 +81,20 @@ class RequestConstraintValidator extends ConstraintValidator
             ->inContext($this->context)
             ->atPath('[request]')
             ->validate($data, $constraint->request);
+    }
+
+    private function validateAndGetJsonBody(RequestConstraint $constraint, Request $request): ?array
+    {
+        try {
+            return $request->toArray();
+        } catch (JsonException $exception) {
+            $this->context->buildViolation($constraint->invalidBodyMessage)
+                ->atPath('[request]')
+                ->setCode($constraint::INVALID_BODY_CONTENT)
+                ->addViolation();
+
+            return null;
+        }
     }
 
     private function validateAttributes(RequestConstraint $constraint, Request $request): void

@@ -82,6 +82,7 @@ class RequestConstraintValidatorTest extends TestCase
      * @dataProvider \DigitalRevolution\SymfonyRequestValidation\Tests\DataProvider\Constraint\RequestConstraintValidatorDataProvider::dataProvider
      * @covers ::validate
      * @covers ::validateRequest
+     * @covers ::validateAndGetJsonBody
      * @throws JsonException
      */
     public function testValidateJson(array $data, bool $success): void
@@ -96,6 +97,7 @@ class RequestConstraintValidatorTest extends TestCase
     /**
      * @covers ::validate
      * @covers ::validateRequest
+     * @covers ::validateAndGetJsonBody
      */
     public function testValidateInvalidJson(): void
     {
