@@ -21,7 +21,6 @@
         }
     },
     "require": {
-        "ext-json": "*",
         "php": ">=7.4",
         "symfony/config": "^5.4 || ^6.0",
         "symfony/dependency-injection": "^5.4 || ^6.0",

@@ -3,7 +3,6 @@ declare(strict_types=1);
 
 namespace DigitalRevolution\SymfonyRequestValidation\Constraint;
 
-use JsonException;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\ConstraintValidator;
@@ -40,14 +39,14 @@ class RequestConstraintValidator extends ConstraintValidator
         $this->validateAttributes($constraint, $value);
     }
 
-    private function validateQuery(RequestConstraint $constraint, Request $value): void
+    private function validateQuery(RequestConstraint $constraint, Request $request): void
     {
         if ($constraint->query !== null) {
             $this->context->getValidator()
                 ->inContext($this->context)
                 ->atPath('[query]')
-                ->validate($value->query->all(), $constraint->query);
-        } elseif ($constraint->allowExtraFields === false && count($value->query) > 0) {
+                ->validate($request->query->all(), $constraint->query);
+        } elseif ($constraint->allowExtraFields === false && count($request->query) > 0) {
             $this->context->buildViolation($constraint->queryMessage)
                 ->atPath('[query]')
                 ->setCode($constraint::MISSING_QUERY_CONSTRAINT)
@@ -55,23 +54,16 @@ class RequestConstraintValidator extends ConstraintValidator
         }
     }
 
-    private function validateRequest(RequestConstraint $constraint, Request $value): void
-    {
-        if (in_array($value->getContentType(), ['json', 'jsonld'], true)) {
-            $this->validateJsonBody($constraint, $value);
-        } else {
-            $this->validateUrlEncodedBody($constraint, $value);
-        }
-    }
-
-    private function validateUrlEncodedBody(RequestConstraint $constraint, Request $value): void
+    private function validateRequest(RequestConstraint $constraint, Request $request): void
     {
         if ($constraint->request !== null) {
+            $data = in_array($request->getContentType(), ['json', 'jsonld'], true) ? $request->toArray() : $request->request->all();
+
             $this->context->getValidator()
                 ->inContext($this->context)
                 ->atPath('[request]')
-                ->validate($value->request->all(), $constraint->request);
-        } elseif ($constraint->allowExtraFields === false && count($value->request) > 0) {
+                ->validate($data, $constraint->request);
+        } elseif ($constraint->allowExtraFields === false && count($request->request) > 0) {
             $this->context->buildViolation($constraint->requestMessage)
                 ->atPath('[request]')
                 ->setCode($constraint::MISSING_REQUEST_CONSTRAINT)
@@ -79,29 +71,13 @@ class RequestConstraintValidator extends ConstraintValidator
         }
     }
 
-    private function validateJsonBody(RequestConstraint $constraint, Request $value): void
-    {
-        if ($constraint->request === null) {
-            return;
-        }
-        try {
-            $json = json_decode($value->getContent(), true, 512, JSON_THROW_ON_ERROR);
-        } catch (JsonException $exception) {
-            $this->context->addViolation('The body is not valid json');
-
-            return;
-        }
-
-        $this->context->getValidator()->inContext($this->context)->atPath('[json]')->validate($json, $constraint->request);
-    }
-
-    private function validateAttributes(RequestConstraint $constraint, Request $value): void
+    private function validateAttributes(RequestConstraint $constraint, Request $request): void
     {
         if ($constraint->attributes !== null) {
             $this->context->getValidator()
                 ->inContext($this->context)
                 ->atPath('[attributes]')
-                ->validate($value->attributes->all(), $constraint->attributes);
+                ->validate($request->attributes->all(), $constraint->attributes);
         }
     }
 }
