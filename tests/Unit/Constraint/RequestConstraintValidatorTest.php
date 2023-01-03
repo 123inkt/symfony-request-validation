@@ -6,6 +6,7 @@ namespace DigitalRevolution\SymfonyRequestValidation\Tests\Unit\Constraint;
 use DigitalRevolution\SymfonyRequestValidation\Constraint\RequestConstraint;
 use DigitalRevolution\SymfonyRequestValidation\Constraint\RequestConstraintValidator;
 use PHPUnit\Framework\TestCase;
+use Symfony\Component\HttpFoundation\Exception\JsonException;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Component\Validator\Context\ExecutionContext;
@@ -45,6 +46,7 @@ class RequestConstraintValidatorTest extends TestCase
 
     /**
      * @param array<mixed> $data
+     *
      * @dataProvider \DigitalRevolution\SymfonyRequestValidation\Tests\DataProvider\Constraint\RequestConstraintValidatorDataProvider::dataProvider
      * @covers ::validate
      * @covers ::validateQuery
@@ -60,6 +62,7 @@ class RequestConstraintValidatorTest extends TestCase
 
     /**
      * @param array<mixed> $data
+     *
      * @dataProvider \DigitalRevolution\SymfonyRequestValidation\Tests\DataProvider\Constraint\RequestConstraintValidatorDataProvider::dataProvider
      * @covers ::validate
      * @covers ::validateRequest
@@ -75,6 +78,42 @@ class RequestConstraintValidatorTest extends TestCase
 
     /**
      * @param array<mixed> $data
+     *
+     * @dataProvider \DigitalRevolution\SymfonyRequestValidation\Tests\DataProvider\Constraint\RequestConstraintValidatorDataProvider::dataProvider
+     * @covers ::validate
+     * @covers ::validateRequest
+     * @covers ::validateAndGetJsonBody
+     * @throws JsonException
+     */
+    public function testValidateJson(array $data, bool $success): void
+    {
+        $request    = new Request([], [], [], [], [], ['HTTP_CONTENT_TYPE' => 'application/json'], json_encode($data, JSON_THROW_ON_ERROR));
+        $constraint = new RequestConstraint(['request' => new Assert\Collection(['email' => new Assert\Required(new Assert\Email())])]);
+        $this->context->setConstraint($constraint);
+        $this->validator->validate($request, $constraint);
+        static::assertCount($success ? 0 : 1, $this->context->getViolations());
+    }
+
+    /**
+     * @covers ::validate
+     * @covers ::validateRequest
+     * @covers ::validateAndGetJsonBody
+     */
+    public function testValidateInvalidJson(): void
+    {
+        $request    = new Request([], [], [], [], [], ['HTTP_CONTENT_TYPE' => 'application/json'], '{invalid');
+        $constraint = new RequestConstraint(['request' => new Assert\Collection(['email' => new Assert\Required(new Assert\Email())])]);
+        $this->context->setConstraint($constraint);
+        $this->validator->validate($request, $constraint);
+
+        $violations = $this->context->getViolations();
+        static::assertCount(1, $violations);
+        static::assertSame('Request::content cant be decoded', $violations->get(0)->getMessageTemplate());
+    }
+
+    /**
+     * @param array<mixed> $data
+     *
      * @dataProvider \DigitalRevolution\SymfonyRequestValidation\Tests\DataProvider\Constraint\RequestConstraintValidatorDataProvider::dataProvider
      * @covers ::validate
      * @covers ::validateAttributes
@@ -90,6 +129,7 @@ class RequestConstraintValidatorTest extends TestCase
 
     /**
      * @param array<mixed> $data
+     *
      * @dataProvider \DigitalRevolution\SymfonyRequestValidation\Tests\DataProvider\Constraint\RequestConstraintValidatorDataProvider::dataProvider
      * @covers ::validate
      * @covers ::validateQuery
@@ -99,11 +139,13 @@ class RequestConstraintValidatorTest extends TestCase
     public function testValidateQueryRequestAttributes(array $data, bool $success): void
     {
         $request    = new Request($data, $data, $data);
-        $constraint = new RequestConstraint([
-            'query'      => new Assert\Collection(['email' => new Assert\Required(new Assert\Email())]),
-            'request'    => new Assert\Collection(['email' => new Assert\Required(new Assert\Email())]),
-            'attributes' => new Assert\Collection(['email' => new Assert\Required(new Assert\Email())])
-        ]);
+        $constraint = new RequestConstraint(
+            [
+                'query'      => new Assert\Collection(['email' => new Assert\Required(new Assert\Email())]),
+                'request'    => new Assert\Collection(['email' => new Assert\Required(new Assert\Email())]),
+                'attributes' => new Assert\Collection(['email' => new Assert\Required(new Assert\Email())])
+            ]
+        );
         $this->context->setConstraint($constraint);
         $this->validator->validate($request, $constraint);
         static::assertCount($success ? 0 : 3, $this->context->getViolations());
@@ -111,7 +153,6 @@ class RequestConstraintValidatorTest extends TestCase
 
     /**
      * Test that 'null' request should be ignored
-     *
      * @covers ::validate
      */
     public function testValidateNullRequest(): void
@@ -125,7 +166,6 @@ class RequestConstraintValidatorTest extends TestCase
 
     /**
      * Test that 'null' request should be ignored
-     *
      * @covers ::validate
      */
     public function testValidateWrongTypeViolation(): void
@@ -141,7 +181,6 @@ class RequestConstraintValidatorTest extends TestCase
 
     /**
      * Test that if no constraints have been specified. the request's query _must_ be empty
-     *
      * @covers ::validate
      * @covers ::validateQuery
      */
@@ -158,14 +197,13 @@ class RequestConstraintValidatorTest extends TestCase
 
     /**
      * Test that if no constraints have been specified. the request's query _must_ not be empty
-     *
      * @covers ::validate
      * @covers ::validateQuery
      */
     public function testValidateEmptyConstraintsFilledQueryAllowed(): void
     {
-        $request    = new Request(['a']);
-        $constraint = new RequestConstraint();
+        $request                      = new Request(['a']);
+        $constraint                   = new RequestConstraint();
         $constraint->allowExtraFields = true;
         $this->context->setConstraint($constraint);
         $this->validator->validate($request, $constraint);
@@ -175,7 +213,6 @@ class RequestConstraintValidatorTest extends TestCase
 
     /**
      * Test that if no constraints have been specified. the request's request _must_ be empty
-     *
      * @covers ::validate
      * @covers ::validateRequest
      */
@@ -192,14 +229,13 @@ class RequestConstraintValidatorTest extends TestCase
 
     /**
      * Test that if no constraints have been specified, and extra fields are allowed. the request's request _must_ not be empty
-     *
      * @covers ::validate
      * @covers ::validateRequest
      */
     public function testValidateEmptyConstraintsFilledRequestAllowed(): void
     {
-        $request    = new Request([], ['b']);
-        $constraint = new RequestConstraint();
+        $request                      = new Request([], ['b']);
+        $constraint                   = new RequestConstraint();
         $constraint->allowExtraFields = true;
 
         $this->context->setConstraint($constraint);
