@@ -1,11 +1,6 @@
 parameters:
 	ignoreErrors:
 		-
-			message: "#^Method DigitalRevolution\\\\SymfonyRequestValidation\\\\Constraint\\\\RequestConstraintValidator\\:\\:validateAndGetJsonBody\\(\\) return type has no value type specified in iterable type array\\.$#"
-			count: 1
-			path: src/Constraint/RequestConstraintValidator.php
-
-		-
 			message: "#^Parameter \\#1 \\$configs \\(array\\<string\\>\\) of method DigitalRevolution\\\\SymfonyRequestValidation\\\\DependencyInjection\\\\RequestValidationExtension\\:\\:load\\(\\) should be contravariant with parameter \\$configs \\(array\\) of method Symfony\\\\Component\\\\DependencyInjection\\\\Extension\\\\ExtensionInterface\\:\\:load\\(\\)$#"
 			count: 2
 			path: src/DependencyInjection/RequestValidationExtension.php

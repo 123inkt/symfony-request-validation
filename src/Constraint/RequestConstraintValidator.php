@@ -83,6 +83,9 @@ class RequestConstraintValidator extends ConstraintValidator
             ->validate($data, $constraint->request);
     }
 
+    /**
+     * @return mixed[]|null
+     */
     private function validateAndGetJsonBody(RequestConstraint $constraint, Request $request): ?array
     {
         try {
