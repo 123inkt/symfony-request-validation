@@ -10,16 +10,6 @@
             "phpstan/extension-installer": true
         }
     },
-    "autoload": {
-        "psr-4": {
-            "DigitalRevolution\\SymfonyRequestValidation\\": "src/"
-        }
-    },
-    "autoload-dev": {
-        "psr-4": {
-            "DigitalRevolution\\SymfonyRequestValidation\\Tests\\": "tests/"
-        }
-    },
     "require": {
         "php": ">=7.4",
         "symfony/config": "^5.4 || ^6.0",
@@ -40,6 +30,16 @@
         "phpstan/phpstan-strict-rules": "^1.1",
         "phpstan/phpstan-symfony": "^1.2",
         "phpstan/extension-installer": "^1.1"
+    },
+    "autoload": {
+        "psr-4": {
+            "DigitalRevolution\\SymfonyRequestValidation\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "DigitalRevolution\\SymfonyRequestValidation\\Tests\\": "tests/"
+        }
     },
     "scripts": {
         "check": ["@check:phpstan", "@check:phpmd", "@check:phpcs"],
