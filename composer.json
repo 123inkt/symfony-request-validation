@@ -20,7 +20,7 @@
         "digitalrevolution/symfony-validation-shorthand": "^1.0.4"
     },
     "require-dev": {
-        "digitalrevolution/phpunit-file-coverage-inspection": "^v1.0",
+        "digitalrevolution/phpunit-file-coverage-inspection": "^v1.6",
         "roave/security-advisories": "dev-latest",
         "squizlabs/php_codesniffer": "^3.6",
         "phpmd/phpmd": "@stable",
