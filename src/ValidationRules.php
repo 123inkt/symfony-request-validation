@@ -7,7 +7,7 @@ use InvalidArgumentException;
 use Symfony\Component\Validator\Constraint;
 
 /**
- * @phpstan-type ConstraintList array<string, string|Constraint|array<string|Constraint>>
+ * @phpstan-type ConstraintList array<string, string|Constraint|array<string|Constraint>>|Constraint[]
  * @phpstan-type DefinitionCollection array{query?: ConstraintList, request?: ConstraintList, attributes?: ConstraintList }
  */
 class ValidationRules
