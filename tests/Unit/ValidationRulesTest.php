@@ -7,6 +7,7 @@ use DigitalRevolution\SymfonyRequestValidation\ValidationRules;
 use InvalidArgumentException;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Validator\Constraints\NotBlank;
+use Symfony\Component\Validator\Constraints\Required;
 
 /**
  * @coversDefaultClass \DigitalRevolution\SymfonyRequestValidation\ValidationRules
@@ -20,6 +21,17 @@ class ValidationRulesTest extends TestCase
     public function testConstructorAndGetters(): void
     {
         $definitions = ['query' => new NotBlank()];
+        $rules       = new ValidationRules($definitions);
+        static::assertSame($definitions, $rules->getDefinitions());
+    }
+
+    /**
+     * @covers ::__construct
+     * @covers ::getDefinitions
+     */
+    public function testConstructorArrayOfConstraints(): void
+    {
+        $definitions = ['query' => [new Required(), new NotBlank()]];
         $rules       = new ValidationRules($definitions);
         static::assertSame($definitions, $rules->getDefinitions());
     }
