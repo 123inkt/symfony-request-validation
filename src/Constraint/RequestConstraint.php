@@ -44,7 +44,7 @@ class RequestConstraint extends Constraint
      *     allowExtraFields?: bool
      *     }|null $options
      */
-    public function __construct(array $options = null)
+    public function __construct(?array $options = null)
     {
         // make sure defaults are set
         $options                     = $options ?? [];
