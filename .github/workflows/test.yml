@@ -11,11 +11,14 @@ permissions:
 
 jobs:
   test:
-    name: PHP ${{ matrix.php-versions }} Test ${{ matrix.composer-flags }}
+    name: PHP ${{ matrix.php-versions }} - Symfony ${{ matrix.symfony }} - Test ${{ matrix.composer-flags }}
+    env:
+      SYMFONY_REQUIRE: ${{ matrix.symfony }}
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        php-versions: ['7.4', '8.0', '8.1', '8.2']
+        php-versions: ['8.1', '8.2', '8.3']
+        symfony: ['6.2.*', '7.0.*']
         composer-flags: ['', '--prefer-lowest']
     steps:
       - uses: actions/checkout@v4
@@ -54,7 +57,7 @@ jobs:
         run: php -dpcov.enabled=1 -dpcov.exclude="~vendor~" vendor/bin/phpunit --testsuite unit --coverage-clover ./.coverage/coverage.xml
 
       - name: Check coverage
-        run: php vendor/bin/phpfci inspect ./.coverage/coverage.xml ./.coverage/phpfci.xml --exit-code-on-failure
+        run: test ! -f ./.coverage/coverage.xml || php vendor/bin/phpfci inspect ./.coverage/coverage.xml --exit-code-on-failure --reportText
 
   quality:
     name: Quality checks
@@ -65,7 +68,7 @@ jobs:
       - name: Setup PHP
         uses: shivammathur/setup-php@v2
         with:
-          php-version: 7.4
+          php-version: 8.1
           coverage: none
 
       - name: Install dependencies
