@@ -17,9 +17,12 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        php-versions: ['8.1', '8.2', '8.3']
-        symfony: ['6.2.*', '7.0.*']
-        composer-flags: ['', '--prefer-lowest']
+        php-versions: [ '8.1', '8.2', '8.3' ]
+        symfony: [ '^6.2', '^7.0' ]
+        composer-flags: [ '', '--prefer-lowest' ]
+        exclude:
+          - php-versions: 8.1
+            symfony: '^7.0'
     steps:
       - uses: actions/checkout@v4
 
@@ -28,6 +31,9 @@ jobs:
         with:
           php-version: ${{ matrix.php-versions }}
           coverage: none
+
+      - name: Add symfony flex
+        run: composer global config --no-interaction allow-plugins.symfony/flex true && composer global require symfony/flex
 
       - name: Validate composer.json and composer.lock
         run: composer validate
@@ -47,7 +53,7 @@ jobs:
       - name: Setup PHP
         uses: shivammathur/setup-php@v2
         with:
-          php-version: 8.2
+          php-version: 8.3
           coverage: pcov
 
       - name: Install dependencies
