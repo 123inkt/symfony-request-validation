@@ -68,9 +68,7 @@ class RequestConstraintValidator extends ConstraintValidator
             return;
         }
 
-        // `getContentType` deprecated since symfony 6.2
-        $contentType = method_exists($request, 'getContentTypeFormat') ? $request->getContentTypeFormat() : $request->getContentType();
-
+        $contentType = $request->getContentTypeFormat();
         if (in_array($contentType, ['json', 'jsonld'], true)) {
             $data = $this->validateAndGetJsonBody($constraint, $request);
             if ($data === null) {

@@ -8,7 +8,7 @@ use Symfony\Component\Validator\Constraint;
 
 /**
  * @phpstan-type ConstraintList array<string, string|Constraint|array<string|Constraint>>|array<int, Constraint>
- * @phpstan-type DefinitionCollection array{query?: ConstraintList, request?: ConstraintList, attributes?: ConstraintList }
+ * @phpstan-type DefinitionCollection array{query?: ConstraintList, request?: ConstraintList, attributes?: ConstraintList}
  */
 class ValidationRules
 {

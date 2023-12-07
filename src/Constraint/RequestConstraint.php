@@ -13,33 +13,28 @@ class RequestConstraint extends Constraint
     public const INVALID_BODY_CONTENT       = '3b41f393-5f46-471e-8a2e-c4035d5fb3cb';
 
     /** @var array<string, string> */
-    protected static $errorNames = [
+    protected const ERROR_NAMES = [
         self::WRONG_VALUE_TYPE           => 'WRONG_VALUE_TYPE',
         self::MISSING_QUERY_CONSTRAINT   => 'MISSING_QUERY_CONSTRAINT',
         self::MISSING_REQUEST_CONSTRAINT => 'MISSING_REQUEST_CONSTRAINT',
         self::INVALID_BODY_CONTENT       => 'INVALID_BODY_CONTENT',
     ];
 
-    /** @var string */
-    public $wrongTypeMessage = 'Expect value to be of type Symfony\Component\HttpFoundation\Request';
-    /** @var string */
-    public $queryMessage = 'Request::query is not empty, but there is no constraint configured.';
-    /** @var string */
-    public $requestMessage = 'Request::request is not empty, but there is no constraint configured.';
-    /** @var string */
-    public $invalidBodyMessage = 'Request::content cant be decoded';
+    public string $wrongTypeMessage = 'Expect value to be of type Symfony\Component\HttpFoundation\Request';
+    public string $queryMessage = 'Request::query is not empty, but there is no constraint configured.';
+    public string $requestMessage = 'Request::request is not empty, but there is no constraint configured.';
+    public string $invalidBodyMessage = 'Request::content cant be decoded';
 
     /** @var Constraint|Constraint[]|null */
-    public $query;
+    public Constraint|array|null $query = null;
 
     /** @var Constraint|Constraint[]|null */
-    public $request;
+    public Constraint|array|null $request = null;
 
     /** @var Constraint|Constraint[]|null */
-    public $attributes;
+    public Constraint|array|null $attributes = null;
 
-    /** @var bool */
-    public $allowExtraFields;
+    public bool $allowExtraFields = false;
 
     /**
      * @param array{
@@ -49,7 +44,7 @@ class RequestConstraint extends Constraint
      *     allowExtraFields?: bool
      *     }|null $options
      */
-    public function __construct($options = null)
+    public function __construct(?array $options = null)
     {
         // make sure defaults are set
         $options                     = $options ?? [];

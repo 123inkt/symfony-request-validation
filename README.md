@@ -1,6 +1,6 @@
-[![Minimum PHP Version](https://img.shields.io/badge/php-%3E%3D%207.4-8892BF)](https://php.net/)
-[![Minimum Symfony Version](https://img.shields.io/badge/symfony-%3E%3D%204.4-brightgreen)](https://symfony.com/doc/current/validation.html)
-![Run tests](https://github.com/123inkt/symfony-request-validation/workflows/Run%20tests/badge.svg)
+[![Minimum PHP Version](https://img.shields.io/badge/php-%3E%3D%208.1-8892BF)](https://php.net/)
+[![Minimum Symfony Version](https://img.shields.io/badge/symfony-%3E%3D%206.2-brightgreen)](https://symfony.com/doc/current/validation.html)
+![Run tests](https://github.com/123inkt/symfony-request-validation/actions/workflows/test.yml/badge.svg)
 
 # Symfony Request Validation
 A request validation component for Symfony. Ease the validation of request properties without the need for an entire Symfony Form.
