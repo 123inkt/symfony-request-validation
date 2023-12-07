@@ -17,7 +17,7 @@
         "symfony/http-foundation": "^6.2 || ^7.0",
         "symfony/http-kernel": "^6.2 || ^7.0",
         "symfony/validator": "^6.2 || ^7.0",
-        "digitalrevolution/symfony-validation-shorthand": "^1.0.4"
+        "digitalrevolution/symfony-validation-shorthand": "^1.2"
     },
     "require-dev": {
         "digitalrevolution/phpunit-file-coverage-inspection": "^v2.0.0",
