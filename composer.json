@@ -25,7 +25,7 @@
         "roave/security-advisories": "dev-latest",
         "squizlabs/php_codesniffer": "^3.6",
         "phpmd/phpmd": "^2.14",
-        "phpunit/phpunit": "^9.6",
+        "phpunit/phpunit": "^11.0",
         "phpstan/phpstan": "^2.0",
         "phpstan/phpstan-phpunit": "^2.0",
         "phpstan/phpstan-strict-rules": "^2.0",
