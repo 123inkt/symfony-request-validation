@@ -23,19 +23,18 @@ class RequestConstraintFactory
      */
     public function createConstraint(ValidationRules $validationRules): RequestConstraint
     {
-        $options = [];
-        foreach ($validationRules->getDefinitions() as $key => $definitions) {
-            $options[$key] = $this->factory->fromRuleDefinitions($definitions, $validationRules->getAllowExtraFields());
-        }
-
         /**
          * @var array{
          *     query?: Constraint|Constraint[],
          *     request?: Constraint|Constraint[],
          *     attributes?: Constraint|Constraint[],
-         *     allowExtraFields: bool
          * } $options
          */
+        $options = [];
+        foreach ($validationRules->getDefinitions() as $key => $definitions) {
+            $options[$key] = $this->factory->fromRuleDefinitions($definitions, $validationRules->getAllowExtraFields());
+        }
+
         // Set extra constraint options
         $options['allowExtraFields'] = $validationRules->getAllowExtraFields();
 

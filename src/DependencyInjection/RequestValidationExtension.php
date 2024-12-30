@@ -25,8 +25,6 @@ class RequestValidationExtension extends Extension
     /**
      * @inheritDoc
      *
-     * @param string[] $configs
-     *
      * @throws Exception
      */
     public function load(array $configs, ContainerBuilder $container): void

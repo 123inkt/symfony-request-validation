@@ -1,6 +1,7 @@
 parameters:
 	ignoreErrors:
 		-
-			message: "#^Parameter \\#1 \\$configs \\(array\\<string\\>\\) of method DigitalRevolution\\\\SymfonyRequestValidation\\\\DependencyInjection\\\\RequestValidationExtension\\:\\:load\\(\\) should be contravariant with parameter \\$configs \\(array\\) of method Symfony\\\\Component\\\\DependencyInjection\\\\Extension\\\\ExtensionInterface\\:\\:load\\(\\)$#"
-			count: 2
-			path: src/DependencyInjection/RequestValidationExtension.php
+			message: '#^Method DigitalRevolution\\SymfonyRequestValidation\\AbstractValidatedRequest\:\:validateCustomRules\(\) has Symfony\\Component\\HttpFoundation\\Exception\\BadRequestException in PHPDoc @throws tag but it''s not thrown\.$#'
+			identifier: throws.unusedType
+			count: 1
+			path: src/AbstractValidatedRequest.php

@@ -7,10 +7,14 @@ use Symfony\Component\Validator\Constraint;
 
 class RequestConstraint extends Constraint
 {
-    public const WRONG_VALUE_TYPE           = '08937cc5-9ea6-460c-9917-d3f6ba912998';
-    public const MISSING_QUERY_CONSTRAINT   = 'b62ab5ca-ee6f-4baf-bdef-ffbe14f674d6';
+    /** @var string */
+    public const MISSING_QUERY_CONSTRAINT = 'b62ab5ca-ee6f-4baf-bdef-ffbe14f674d6';
+    /** @var string */
     public const MISSING_REQUEST_CONSTRAINT = 'c3990dad-3638-449b-9dd3-4dd42e90c52f';
-    public const INVALID_BODY_CONTENT       = '3b41f393-5f46-471e-8a2e-c4035d5fb3cb';
+    /** @var string */
+    public const INVALID_BODY_CONTENT = '3b41f393-5f46-471e-8a2e-c4035d5fb3cb';
+    /** @var string */
+    public const WRONG_VALUE_TYPE = '08937cc5-9ea6-460c-9917-d3f6ba912998';
 
     /** @var array<string, string> */
     protected const ERROR_NAMES = [
