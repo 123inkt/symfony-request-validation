@@ -80,6 +80,7 @@ jobs:
         with:
           php-version: 8.1
           coverage: none
+          tools: phpmd
 
       - name: Install dependencies
         run: composer install --prefer-dist --no-progress --no-suggest
