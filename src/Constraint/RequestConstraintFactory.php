@@ -10,12 +10,8 @@ use Symfony\Component\Validator\Constraint;
 
 class RequestConstraintFactory
 {
-    /** @var ConstraintFactory */
-    private $factory;
-
-    public function __construct(ConstraintFactory $factory = null)
+    public function __construct(private readonly ConstraintFactory $factory = new ConstraintFactory())
     {
-        $this->factory = $factory ?? new ConstraintFactory();
     }
 
     /**

@@ -12,11 +12,9 @@ use Symfony\Component\Validator\Exception\UnexpectedTypeException;
 class RequestConstraintValidator extends ConstraintValidator
 {
     /**
-     * @param mixed $value
-     *
      * @inheritDoc
      */
-    public function validate($value, Constraint $constraint): void
+    public function validate(mixed $value, Constraint $constraint): void
     {
         if ($constraint instanceof RequestConstraint === false) {
             throw new UnexpectedTypeException($constraint, RequestConstraint::class);
@@ -91,7 +89,7 @@ class RequestConstraintValidator extends ConstraintValidator
     {
         try {
             return $request->toArray();
-        } catch (JsonException $exception) {
+        } catch (JsonException) {
             $this->context->buildViolation($constraint->invalidBodyMessage)
                 ->atPath('[request]')
                 ->setCode($constraint::INVALID_BODY_CONTENT)
