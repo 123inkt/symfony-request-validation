@@ -70,7 +70,7 @@ class RequestConstraintValidatorTest extends TestCase
     public function testValidateRequest(array $data, bool $success): void
     {
         $request    = new Request([], $data);
-        $constraint = new RequestConstraint(['request' => new Assert\Collection(['email' => new Assert\Required(new Assert\Email())])]);
+        $constraint = new RequestConstraint(request: new Assert\Collection(['email' => new Assert\Required(new Assert\Email())]));
         $this->context->setConstraint($constraint);
         $this->validator->validate($request, $constraint);
         static::assertCount($success ? 0 : 1, $this->context->getViolations());
@@ -88,7 +88,7 @@ class RequestConstraintValidatorTest extends TestCase
     public function testValidateJson(array $data, bool $success): void
     {
         $request    = new Request([], [], [], [], [], ['HTTP_CONTENT_TYPE' => 'application/json'], json_encode($data, JSON_THROW_ON_ERROR));
-        $constraint = new RequestConstraint(['request' => new Assert\Collection(['email' => new Assert\Required(new Assert\Email())])]);
+        $constraint = new RequestConstraint(request: new Assert\Collection(['email' => new Assert\Required(new Assert\Email())]));
         $this->context->setConstraint($constraint);
         $this->validator->validate($request, $constraint);
         static::assertCount($success ? 0 : 1, $this->context->getViolations());
@@ -102,7 +102,7 @@ class RequestConstraintValidatorTest extends TestCase
     public function testValidateInvalidJson(): void
     {
         $request    = new Request([], [], [], [], [], ['HTTP_CONTENT_TYPE' => 'application/json'], '{invalid');
-        $constraint = new RequestConstraint(['request' => new Assert\Collection(['email' => new Assert\Required(new Assert\Email())])]);
+        $constraint = new RequestConstraint(request: new Assert\Collection(['email' => new Assert\Required(new Assert\Email())]));
         $this->context->setConstraint($constraint);
         $this->validator->validate($request, $constraint);
 
@@ -121,7 +121,7 @@ class RequestConstraintValidatorTest extends TestCase
     public function testValidateAttributes(array $data, bool $success): void
     {
         $request    = new Request([], [], $data);
-        $constraint = new RequestConstraint(['attributes' => new Assert\Collection(['email' => new Assert\Required(new Assert\Email())])]);
+        $constraint = new RequestConstraint(attributes: new Assert\Collection(['email' => new Assert\Required(new Assert\Email())]));
         $this->context->setConstraint($constraint);
         $this->validator->validate($request, $constraint);
         static::assertCount($success ? 0 : 1, $this->context->getViolations());
@@ -140,11 +140,9 @@ class RequestConstraintValidatorTest extends TestCase
     {
         $request    = new Request($data, $data, $data);
         $constraint = new RequestConstraint(
-            [
-                'query'      => new Assert\Collection(['email' => new Assert\Required(new Assert\Email())]),
-                'request'    => new Assert\Collection(['email' => new Assert\Required(new Assert\Email())]),
-                'attributes' => new Assert\Collection(['email' => new Assert\Required(new Assert\Email())])
-            ]
+            new Assert\Collection(['email' => new Assert\Required(new Assert\Email())]),
+            new Assert\Collection(['email' => new Assert\Required(new Assert\Email())]),
+            new Assert\Collection(['email' => new Assert\Required(new Assert\Email())])
         );
         $this->context->setConstraint($constraint);
         $this->validator->validate($request, $constraint);

@@ -9,22 +9,18 @@ use Symfony\Component\Validator\ConstraintViolationListInterface;
 
 class ViolationListRenderer
 {
-    /** @var ConstraintViolationListInterface<ConstraintViolationInterface> */
-    private $violationList;
-
     /**
      * @param ConstraintViolationListInterface<ConstraintViolationInterface> $violations
      */
-    public function __construct(ConstraintViolationListInterface $violations)
+    public function __construct(private readonly ConstraintViolationListInterface $violations)
     {
-        $this->violationList = $violations;
     }
 
     public function render(): string
     {
         $messages = [];
         /** @var ConstraintViolationInterface $violation */
-        foreach ($this->violationList as $violation) {
+        foreach ($this->violations as $violation) {
             $propertyPath = implode('.', PropertyPath::toArray($violation->getPropertyPath()));
             $messages[]   = $propertyPath . ': ' . $violation->getMessage();
         }

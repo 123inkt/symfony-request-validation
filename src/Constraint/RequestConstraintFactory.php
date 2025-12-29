@@ -6,16 +6,11 @@ namespace DigitalRevolution\SymfonyRequestValidation\Constraint;
 use DigitalRevolution\SymfonyRequestValidation\ValidationRules;
 use DigitalRevolution\SymfonyValidationShorthand\ConstraintFactory;
 use DigitalRevolution\SymfonyValidationShorthand\Rule\InvalidRuleException;
-use Symfony\Component\Validator\Constraint;
 
 class RequestConstraintFactory
 {
-    /** @var ConstraintFactory */
-    private $factory;
-
-    public function __construct(ConstraintFactory $factory = null)
+    public function __construct(private readonly ConstraintFactory $factory = new ConstraintFactory())
     {
-        $this->factory = $factory ?? new ConstraintFactory();
     }
 
     /**
@@ -23,21 +18,19 @@ class RequestConstraintFactory
      */
     public function createConstraint(ValidationRules $validationRules): RequestConstraint
     {
-        /**
-         * @var array{
-         *     query?: Constraint|Constraint[],
-         *     request?: Constraint|Constraint[],
-         *     attributes?: Constraint|Constraint[],
-         * } $options
-         */
-        $options = [];
-        foreach ($validationRules->getDefinitions() as $key => $definitions) {
-            $options[$key] = $this->factory->fromRuleDefinitions($definitions, $validationRules->getAllowExtraFields());
+        $query = $request = $attributes = null;
+
+        $definitions = $validationRules->getDefinitions();
+        if (isset($definitions['query'])) {
+            $query = $this->factory->fromRuleDefinitions($definitions['query'], $validationRules->getAllowExtraFields());
+        }
+        if (isset($definitions['request'])) {
+            $request = $this->factory->fromRuleDefinitions($definitions['request'], $validationRules->getAllowExtraFields());
+        }
+        if (isset($definitions['attributes'])) {
+            $attributes = $this->factory->fromRuleDefinitions($definitions['attributes'], $validationRules->getAllowExtraFields());
         }
 
-        // Set extra constraint options
-        $options['allowExtraFields'] = $validationRules->getAllowExtraFields();
-
-        return new RequestConstraint($options);
+        return new RequestConstraint($query, $request, $attributes, $validationRules->getAllowExtraFields());
     }
 }
