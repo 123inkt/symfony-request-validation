@@ -29,39 +29,17 @@ class RequestConstraint extends Constraint
     public string $requestMessage = 'Request::request is not empty, but there is no constraint configured.';
     public string $invalidBodyMessage = 'Request::content cant be decoded';
 
-    /** @var Constraint|Constraint[]|null */
-    public Constraint|array|null $query = null;
-
-    /** @var Constraint|Constraint[]|null */
-    public Constraint|array|null $request = null;
-
-    /** @var Constraint|Constraint[]|null */
-    public Constraint|array|null $attributes = null;
-
-    public bool $allowExtraFields = false;
-
     /**
-     * @param array{
-     *     query?: Constraint|Constraint[],
-     *     request?: Constraint|Constraint[],
-     *     attributes?: Constraint|Constraint[],
-     *     allowExtraFields?: bool
-     *     }|null $options
+     * @param Constraint|Constraint[]|null $query
+     * @param Constraint|Constraint[]|null $request
+     * @param Constraint|Constraint[]|null $attributes
      */
-    public function __construct(?array $options = null)
-    {
-        // make sure defaults are set
-        $options                     = $options ?? [];
-        $options['query']            = $options['query'] ?? null;
-        $options['request']          = $options['request'] ?? null;
-        $options['attributes']       = $options['attributes'] ?? null;
-        $options['allowExtraFields'] = $options['allowExtraFields'] ?? false;
-
-        parent::__construct($options);
-    }
-
-    public function getRequiredOptions(): array
-    {
-        return ['query', 'request', 'attributes', 'allowExtraFields'];
+    public function __construct(
+        public Constraint|array|null $query = null,
+        public Constraint|array|null $request = null,
+        public Constraint|array|null $attributes = null,
+        public bool $allowExtraFields = false,
+    ) {
+        parent::__construct();
     }
 }
