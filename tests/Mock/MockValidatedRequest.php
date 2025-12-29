@@ -14,8 +14,7 @@ use Symfony\Component\Validator\Validator\ValidatorInterface;
 class MockValidatedRequest extends AbstractValidatedRequest
 {
     private ?ValidationRules $rules;
-    /** @var Response|Exception|null */
-    private $result = null;
+    private Response|Exception|null $result = null;
 
     public function __construct(
         RequestStack $requestStack,

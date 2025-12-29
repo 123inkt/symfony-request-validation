@@ -9,7 +9,6 @@ use PHPUnit\Framework\TestCase;
 use Symfony\Component\Validator\Constraints\IsNull;
 use Symfony\Component\Validator\Constraints\NotBlank;
 use Symfony\Component\Validator\Constraints\NotNull;
-use Symfony\Component\Validator\Exception\InvalidOptionsException;
 
 #[CoversClass(RequestConstraint::class)]
 class RequestConstraintTest extends TestCase
@@ -28,24 +27,10 @@ class RequestConstraintTest extends TestCase
         $constraintA = new NotBlank();
         $constraintB = new NotNull();
         $constraintC = new IsNull();
-        $constraint  = new RequestConstraint(
-            ['query' => $constraintA, 'request' => $constraintB, 'attributes' => $constraintC, 'allowExtraFields' => true]
-        );
+        $constraint = new RequestConstraint($constraintA, $constraintB, $constraintC, true);
         static::assertSame($constraintA, $constraint->query);
         static::assertSame($constraintB, $constraint->request);
         static::assertSame($constraintC, $constraint->attributes);
         static::assertTrue($constraint->allowExtraFields);
-    }
-
-    public function testConstructIncorrectOption(): void
-    {
-        $this->expectException(InvalidOptionsException::class);
-        new RequestConstraint(['invalid' => 'invalid']);
-    }
-
-    public function testGetRequiredOptions(): void
-    {
-        $constraint = new RequestConstraint();
-        static::assertSame(['query', 'request', 'attributes', 'allowExtraFields'], $constraint->getRequiredOptions());
     }
 }
