@@ -1,7 +1,0 @@
-parameters:
-	ignoreErrors:
-		-
-			message: '#^Method DigitalRevolution\\SymfonyRequestValidation\\AbstractValidatedRequest\:\:validateCustomRules\(\) has Symfony\\Component\\HttpFoundation\\Exception\\BadRequestException in PHPDoc @throws tag but it''s not thrown\.$#'
-			identifier: throws.unusedType
-			count: 1
-			path: src/AbstractValidatedRequest.php
