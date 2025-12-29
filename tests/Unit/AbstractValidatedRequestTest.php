@@ -76,7 +76,7 @@ class AbstractValidatedRequestTest extends TestCase
         $stack->push($request);
 
         // create rules
-        $constraint = new Collection(['fields' => ['test' => new NotBlank()]]);
+        $constraint = new Collection(fields: ['test' => new NotBlank()]);
         $rules      = new ValidationRules(['request' => $constraint]);
 
         // create violations
