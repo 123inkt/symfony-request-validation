@@ -6,13 +6,11 @@ namespace DigitalRevolution\SymfonyRequestValidation\Tests\Unit\Bundle;
 use DigitalRevolution\SymfonyRequestValidation\Bundle\RequestValidationBundle;
 use DigitalRevolution\SymfonyRequestValidation\DependencyInjection\RequestValidationExtension;
 use PHPUnit\Framework\Attributes\CoversClass;
-use PHPUnit\Framework\Attributes\CoversFunction;
 use PHPUnit\Framework\TestCase;
 use ReflectionClass;
 use ReflectionException;
 
 #[CoversClass(RequestValidationBundle::class)]
-#[CoversFunction('getContainerExtensionClass')]
 class RequestValidationBundleTest extends TestCase
 {
     /**
