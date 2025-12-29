@@ -9,6 +9,8 @@ use DigitalRevolution\SymfonyRequestValidation\ValidationRules;
 use DigitalRevolution\SymfonyValidationShorthand\ConstraintFactory;
 use DigitalRevolution\SymfonyValidationShorthand\Rule\InvalidRuleException;
 use Generator;
+use PHPUnit\Framework\Attributes\CoversNothing;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\HttpFoundation\Exception\BadRequestException;
 use Symfony\Component\HttpFoundation\Request;
@@ -17,19 +19,16 @@ use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\Constraints\Collection;
 use Symfony\Component\Validator\Validation;
 
-/**
- * @coversNothing
- */
+#[CoversNothing]
 class AbstractValidatedRequestTest extends TestCase
 {
     /**
-     * @dataProvider dataProvider
      *
      * @param array<string, mixed>                                                      $data
      * @param Collection|array<string, string|Constraint|array<string|Constraint>>|null $rules
-     *
      * @throws BadRequestException|InvalidRuleException
      */
+    #[DataProvider('dataProvider')]
     public function testGetRequestValidation(array $data, $rules, bool $isValid): void
     {
         $request = new Request($data);
@@ -52,13 +51,12 @@ class AbstractValidatedRequestTest extends TestCase
     }
 
     /**
-     * @dataProvider dataProvider
      *
      * @param array<string, mixed>                                                      $data
      * @param Collection|array<string, string|Constraint|array<string|Constraint>>|null $rules
-     *
      * @throws BadRequestException|InvalidRuleException
      */
+    #[DataProvider('dataProvider')]
     public function testPostRequestValidation(array $data, $rules, bool $isValid): void
     {
         $request = new Request([], $data);
@@ -81,11 +79,11 @@ class AbstractValidatedRequestTest extends TestCase
     }
 
     /**
-     * @dataProvider dataProvider
      * @param array<string, mixed>                                                      $data
      * @param Collection|array<string, string|Constraint|array<string|Constraint>>|null $rules
      * @throws BadRequestException|InvalidRuleException
      */
+    #[DataProvider('dataProvider')]
     public function testRequestAttributesValidation(array $data, $rules, bool $isValid): void
     {
         $request = new Request([], [], $data);
@@ -107,7 +105,7 @@ class AbstractValidatedRequestTest extends TestCase
         static::assertTrue($request->isValid());
     }
 
-    public function dataProvider(): Generator
+    public static function dataProvider(): Generator
     {
         // test required fields
         yield "required: name exists" => [['name' => 'Foobar'], ['name' => 'required'], true];

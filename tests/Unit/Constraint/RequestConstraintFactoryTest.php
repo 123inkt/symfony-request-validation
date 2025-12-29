@@ -8,17 +8,14 @@ use DigitalRevolution\SymfonyRequestValidation\Constraint\RequestConstraintFacto
 use DigitalRevolution\SymfonyRequestValidation\ValidationRules;
 use DigitalRevolution\SymfonyValidationShorthand\ConstraintFactory;
 use DigitalRevolution\SymfonyValidationShorthand\Rule\InvalidRuleException;
+use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Validator\Constraints as Assert;
 
-/**
- * @coversDefaultClass \DigitalRevolution\SymfonyRequestValidation\Constraint\RequestConstraintFactory
- * @covers ::__construct
- */
+#[CoversClass(RequestConstraintFactory::class)]
 class RequestConstraintFactoryTest extends TestCase
 {
     /**
-     * @covers ::createConstraint
      * @throws InvalidRuleException
      */
     public function testCreateRequestConstraint(): void
@@ -31,12 +28,14 @@ class RequestConstraintFactoryTest extends TestCase
 
         $constraintA = new Assert\NotNull();
         $constraintB = new Assert\NotBlank();
-        $result      = $factory->createConstraint(new ValidationRules(['query' => $constraintA, 'request' => $constraintB]));
-        static::assertEquals(new RequestConstraint($constraintA, $constraintB), $result);
+        $constraintC = new Assert\NotBlank();
+        $result = $factory->createConstraint(
+            new ValidationRules(['query' => $constraintA, 'request' => $constraintB, 'attributes' => $constraintC])
+        );
+        static::assertEquals(new RequestConstraint($constraintA, $constraintB, $constraintC), $result);
     }
 
     /**
-     * @covers ::createConstraint
      * @throws InvalidRuleException
      */
     public function testCreateRequestConstraintAllowExtraFields(): void

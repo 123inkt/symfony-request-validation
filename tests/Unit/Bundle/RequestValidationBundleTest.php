@@ -5,17 +5,15 @@ namespace DigitalRevolution\SymfonyRequestValidation\Tests\Unit\Bundle;
 
 use DigitalRevolution\SymfonyRequestValidation\Bundle\RequestValidationBundle;
 use DigitalRevolution\SymfonyRequestValidation\DependencyInjection\RequestValidationExtension;
+use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
 use ReflectionClass;
 use ReflectionException;
 
-/**
- * @coversDefaultClass \DigitalRevolution\SymfonyRequestValidation\Bundle\RequestValidationBundle
- */
+#[CoversClass(RequestValidationBundle::class)]
 class RequestValidationBundleTest extends TestCase
 {
     /**
-     * @covers ::getContainerExtensionClass
      * @throws ReflectionException
      */
     public function testGetContainerExtensionClass(): void
@@ -24,7 +22,6 @@ class RequestValidationBundleTest extends TestCase
 
         $class  = new ReflectionClass($bundle);
         $method = $class->getMethod('getContainerExtensionClass');
-        $method->setAccessible(true);
         $result = $method->invoke($bundle, []);
 
         static::assertSame(RequestValidationExtension::class, $result);
