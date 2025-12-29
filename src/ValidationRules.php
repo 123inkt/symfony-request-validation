@@ -13,7 +13,7 @@ use Symfony\Component\Validator\Constraint;
 class ValidationRules
 {
     /** @phpstan-var DefinitionCollection $definitions */
-    private $definitions;
+    private array $definitions;
 
     private bool $allowExtraFields;
 
