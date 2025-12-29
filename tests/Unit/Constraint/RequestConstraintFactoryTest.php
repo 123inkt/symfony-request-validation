@@ -28,8 +28,11 @@ class RequestConstraintFactoryTest extends TestCase
 
         $constraintA = new Assert\NotNull();
         $constraintB = new Assert\NotBlank();
-        $result      = $factory->createConstraint(new ValidationRules(['query' => $constraintA, 'request' => $constraintB]));
-        static::assertEquals(new RequestConstraint($constraintA, $constraintB), $result);
+        $constraintC = new Assert\NotBlank();
+        $result = $factory->createConstraint(
+            new ValidationRules(['query' => $constraintA, 'request' => $constraintB, 'attributes' => $constraintC])
+        );
+        static::assertEquals(new RequestConstraint($constraintA, $constraintB, $constraintC), $result);
     }
 
     /**
