@@ -8,6 +8,8 @@ use DigitalRevolution\SymfonyRequestValidation\EventSubscriber\RequestValidation
 use DigitalRevolution\SymfonyRequestValidation\Tests\Mock\MockValidatedRequest;
 use DigitalRevolution\SymfonyRequestValidation\ValidationRules;
 use Exception;
+use PHPUnit\Framework\Attributes\CoversClass;
+use PHPUnit\Framework\Attributes\CoversFunction;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use stdClass;
@@ -21,13 +23,10 @@ use Symfony\Component\HttpKernel\KernelEvents;
 use Symfony\Component\Validator\ConstraintViolationList;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
-/**
- * @coversDefaultClass \DigitalRevolution\SymfonyRequestValidation\EventSubscriber\RequestValidationSubscriber
- */
+#[CoversClass(RequestValidationSubscriber::class)]
 class RequestValidationSubscriberTest extends TestCase
 {
-    /** @var HttpKernelInterface&MockObject */
-    private HttpKernelInterface         $kernel;
+    private HttpKernelInterface&MockObject $kernel;
     private MockValidatedRequest        $validatedRequest;
     private Request                     $request;
     private RequestValidationSubscriber $subscriber;
@@ -52,31 +51,22 @@ class RequestValidationSubscriberTest extends TestCase
         );
     }
 
-    /**
-     * @covers ::getSubscribedEvents
-     */
     public function testGetSubscribedEvents(): void
     {
         static::assertSame([KernelEvents::CONTROLLER_ARGUMENTS => ['handleArguments', 1]], RequestValidationSubscriber::getSubscribedEvents());
     }
 
-    /**
-     * @covers ::handleArguments
-     */
     public function testHandleArgumentsShouldOnlyAcceptAbstractValidatedRequest(): void
     {
         try {
             $this->subscriber->handleArguments($this->createArgumentsEvent([1, 'foo', new stdClass(), 1.1, null]));
             $success = true;
-        } catch (Exception $e) {
+        } catch (Exception) {
             $success = false;
         }
         static::assertTrue($success);
     }
 
-    /**
-     * @covers ::handleArguments
-     */
     public function testHandleArgumentsAbstractValidatedRequestShouldPass(): void
     {
         $this->validatedRequest->setValidateCustomRulesResult(null);
@@ -84,14 +74,13 @@ class RequestValidationSubscriberTest extends TestCase
         try {
             $this->subscriber->handleArguments($this->createArgumentsEvent([$this->validatedRequest]));
             $success = true;
-        } catch (Exception $e) {
+        } catch (Exception) {
             $success = false;
         }
         static::assertTrue($success);
     }
 
     /**
-     * @covers ::handleArguments
      * @throws Exception
      */
     public function testHandleArgumentsShouldThrowException(): void
@@ -104,7 +93,6 @@ class RequestValidationSubscriberTest extends TestCase
     }
 
     /**
-     * @covers ::handleArguments
      * @throws Exception
      */
     public function testHandleArgumentsShouldChangeResponse(): void

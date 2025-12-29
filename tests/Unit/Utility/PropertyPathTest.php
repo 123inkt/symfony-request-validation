@@ -3,17 +3,14 @@ declare(strict_types=1);
 
 namespace DigitalRevolution\SymfonyRequestValidation\Tests\Unit\Utility;
 
+use PHPUnit\Framework\Attributes\CoversFunction;
+use PHPUnit\Framework\Attributes\CoversClass;
 use DigitalRevolution\SymfonyRequestValidation\Utility\PropertyPath;
 use PHPUnit\Framework\TestCase;
 
-/**
- * @coversDefaultClass \DigitalRevolution\SymfonyRequestValidation\Utility\PropertyPath
- */
+#[CoversClass(PropertyPath::class)]
 class PropertyPathTest extends TestCase
 {
-    /**
-     * @covers ::toArray
-     */
     public function testToArray(): void
     {
         static::assertSame([], PropertyPath::toArray(null));

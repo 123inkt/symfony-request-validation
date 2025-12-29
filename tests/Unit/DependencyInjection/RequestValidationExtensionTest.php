@@ -3,20 +3,18 @@ declare(strict_types=1);
 
 namespace DigitalRevolution\SymfonyRequestValidation\Tests\Unit\DependencyInjection;
 
+use PHPUnit\Framework\Attributes\CoversFunction;
+use PHPUnit\Framework\Attributes\CoversClass;
 use DigitalRevolution\SymfonyRequestValidation\DependencyInjection\RequestValidationExtension;
 use Exception;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Config\FileLocatorInterface;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 
-/**
- * @coversDefaultClass \DigitalRevolution\SymfonyRequestValidation\DependencyInjection\RequestValidationExtension
- * @covers ::__construct
- */
+#[CoversClass(RequestValidationExtension::class)]
 class RequestValidationExtensionTest extends TestCase
 {
     /**
-     * @covers ::load
      * @throws Exception
      */
     public function testLoad(): void

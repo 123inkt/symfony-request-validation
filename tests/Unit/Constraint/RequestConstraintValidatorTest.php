@@ -5,6 +5,9 @@ namespace DigitalRevolution\SymfonyRequestValidation\Tests\Unit\Constraint;
 
 use DigitalRevolution\SymfonyRequestValidation\Constraint\RequestConstraint;
 use DigitalRevolution\SymfonyRequestValidation\Constraint\RequestConstraintValidator;
+use DigitalRevolution\SymfonyRequestValidation\Tests\DataProvider\Constraint\RequestConstraintValidatorDataProvider;
+use PHPUnit\Framework\Attributes\CoversClass;
+use PHPUnit\Framework\Attributes\DataProviderExternal;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\HttpFoundation\Exception\JsonException;
 use Symfony\Component\HttpFoundation\Request;
@@ -14,16 +17,11 @@ use Symfony\Component\Validator\Exception\UnexpectedTypeException;
 use Symfony\Component\Validator\Validation;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
-/**
- * @coversDefaultClass \DigitalRevolution\SymfonyRequestValidation\Constraint\RequestConstraintValidator
- */
+#[CoversClass(RequestConstraintValidator::class)]
 class RequestConstraintValidatorTest extends TestCase
 {
-    /** @var ExecutionContext */
-    private $context;
-
-    /** @var RequestConstraintValidator */
-    private $validator;
+    private ExecutionContext $context;
+    private RequestConstraintValidator $validator;
 
     protected function setUp(): void
     {
@@ -46,11 +44,8 @@ class RequestConstraintValidatorTest extends TestCase
 
     /**
      * @param array<mixed> $data
-     *
-     * @dataProvider \DigitalRevolution\SymfonyRequestValidation\Tests\DataProvider\Constraint\RequestConstraintValidatorDataProvider::dataProvider
-     * @covers ::validate
-     * @covers ::validateQuery
      */
+    #[DataProviderExternal(RequestConstraintValidatorDataProvider::class, 'dataProvider')]
     public function testValidateQuery(array $data, bool $success): void
     {
         $request    = new Request($data);
@@ -62,11 +57,8 @@ class RequestConstraintValidatorTest extends TestCase
 
     /**
      * @param array<mixed> $data
-     *
-     * @dataProvider \DigitalRevolution\SymfonyRequestValidation\Tests\DataProvider\Constraint\RequestConstraintValidatorDataProvider::dataProvider
-     * @covers ::validate
-     * @covers ::validateRequest
      */
+    #[DataProviderExternal(RequestConstraintValidatorDataProvider::class, 'dataProvider')]
     public function testValidateRequest(array $data, bool $success): void
     {
         $request    = new Request([], $data);
@@ -79,12 +71,9 @@ class RequestConstraintValidatorTest extends TestCase
     /**
      * @param array<mixed> $data
      *
-     * @dataProvider \DigitalRevolution\SymfonyRequestValidation\Tests\DataProvider\Constraint\RequestConstraintValidatorDataProvider::dataProvider
-     * @covers ::validate
-     * @covers ::validateRequest
-     * @covers ::validateAndGetJsonBody
      * @throws JsonException
      */
+    #[DataProviderExternal(RequestConstraintValidatorDataProvider::class, 'dataProvider')]
     public function testValidateJson(array $data, bool $success): void
     {
         $request    = new Request([], [], [], [], [], ['HTTP_CONTENT_TYPE' => 'application/json'], json_encode($data, JSON_THROW_ON_ERROR));
@@ -94,11 +83,6 @@ class RequestConstraintValidatorTest extends TestCase
         static::assertCount($success ? 0 : 1, $this->context->getViolations());
     }
 
-    /**
-     * @covers ::validate
-     * @covers ::validateRequest
-     * @covers ::validateAndGetJsonBody
-     */
     public function testValidateInvalidJson(): void
     {
         $request    = new Request([], [], [], [], [], ['HTTP_CONTENT_TYPE' => 'application/json'], '{invalid');
@@ -113,11 +97,8 @@ class RequestConstraintValidatorTest extends TestCase
 
     /**
      * @param array<mixed> $data
-     *
-     * @dataProvider \DigitalRevolution\SymfonyRequestValidation\Tests\DataProvider\Constraint\RequestConstraintValidatorDataProvider::dataProvider
-     * @covers ::validate
-     * @covers ::validateAttributes
      */
+    #[DataProviderExternal(RequestConstraintValidatorDataProvider::class, 'dataProvider')]
     public function testValidateAttributes(array $data, bool $success): void
     {
         $request    = new Request([], [], $data);
@@ -129,13 +110,8 @@ class RequestConstraintValidatorTest extends TestCase
 
     /**
      * @param array<mixed> $data
-     *
-     * @dataProvider \DigitalRevolution\SymfonyRequestValidation\Tests\DataProvider\Constraint\RequestConstraintValidatorDataProvider::dataProvider
-     * @covers ::validate
-     * @covers ::validateQuery
-     * @covers ::validateRequest
-     * @covers ::validateAttributes
      */
+    #[DataProviderExternal(RequestConstraintValidatorDataProvider::class, 'dataProvider')]
     public function testValidateQueryRequestAttributes(array $data, bool $success): void
     {
         $request    = new Request($data, $data, $data);
@@ -153,7 +129,6 @@ class RequestConstraintValidatorTest extends TestCase
 
     /**
      * Test that 'null' request should be ignored
-     * @covers ::validate
      */
     public function testValidateNullRequest(): void
     {
@@ -166,7 +141,6 @@ class RequestConstraintValidatorTest extends TestCase
 
     /**
      * Test that 'null' request should be ignored
-     * @covers ::validate
      */
     public function testValidateWrongTypeViolation(): void
     {
@@ -181,8 +155,6 @@ class RequestConstraintValidatorTest extends TestCase
 
     /**
      * Test that if no constraints have been specified. the request's query _must_ be empty
-     * @covers ::validate
-     * @covers ::validateQuery
      */
     public function testValidateEmptyConstraintsFilledQuery(): void
     {
@@ -197,8 +169,6 @@ class RequestConstraintValidatorTest extends TestCase
 
     /**
      * Test that if no constraints have been specified. the request's query _must_ not be empty
-     * @covers ::validate
-     * @covers ::validateQuery
      */
     public function testValidateEmptyConstraintsFilledQueryAllowed(): void
     {
@@ -213,8 +183,6 @@ class RequestConstraintValidatorTest extends TestCase
 
     /**
      * Test that if no constraints have been specified. the request's request _must_ be empty
-     * @covers ::validate
-     * @covers ::validateRequest
      */
     public function testValidateEmptyConstraintsFilledRequest(): void
     {
@@ -229,8 +197,6 @@ class RequestConstraintValidatorTest extends TestCase
 
     /**
      * Test that if no constraints have been specified, and extra fields are allowed. the request's request _must_ not be empty
-     * @covers ::validate
-     * @covers ::validateRequest
      */
     public function testValidateEmptyConstraintsFilledRequestAllowed(): void
     {
@@ -245,8 +211,6 @@ class RequestConstraintValidatorTest extends TestCase
     }
 
     /**
-     * @covers ::validate
-     * @covers ::validateQuery
      */
     public function testValidateQueryFailure(): void
     {
