@@ -3,11 +3,13 @@ declare(strict_types=1);
 
 namespace DigitalRevolution\SymfonyRequestValidation\Tests\Unit;
 
+use DigitalRevolution\SymfonyRequestValidation\AbstractValidatedRequest;
 use DigitalRevolution\SymfonyRequestValidation\Constraint\RequestConstraintFactory;
 use DigitalRevolution\SymfonyRequestValidation\Tests\Mock\MockValidatedRequest;
 use DigitalRevolution\SymfonyRequestValidation\ValidationRules;
 use DigitalRevolution\SymfonyValidationShorthand\Rule\InvalidRuleException;
 use Exception;
+use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\HttpFoundation\Exception\BadRequestException;
@@ -20,16 +22,11 @@ use Symfony\Component\Validator\ConstraintViolation;
 use Symfony\Component\Validator\ConstraintViolationList;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
-/**
- * @coversDefaultClass \DigitalRevolution\SymfonyRequestValidation\AbstractValidatedRequest
- * @covers ::__construct
- */
+#[CoversClass(AbstractValidatedRequest::class)]
 class AbstractValidatedRequestTest extends TestCase
 {
-    /** @var RequestConstraintFactory&MockObject */
-    private RequestConstraintFactory $constraintFactory;
-    /** @var ValidatorInterface&MockObject */
-    private ValidatorInterface $validator;
+    private RequestConstraintFactory&MockObject $constraintFactory;
+    private ValidatorInterface&MockObject $validator;
 
     protected function setUp(): void
     {
@@ -39,7 +36,6 @@ class AbstractValidatedRequestTest extends TestCase
     }
 
     /**
-     * @covers ::__construct
      * @throws Exception
      */
     public function testConstructorNullRequest(): void
@@ -52,9 +48,6 @@ class AbstractValidatedRequestTest extends TestCase
     }
 
     /**
-     * @covers ::validate
-     * @covers ::isValid
-     * @covers ::getRequest
      * @throws Exception
      */
     public function testValidateWithoutViolations(): void
@@ -74,9 +67,6 @@ class AbstractValidatedRequestTest extends TestCase
     }
 
     /**
-     * @covers ::__construct
-     * @covers ::validate
-     * @covers ::handleViolations
      * @throws BadRequestException|InvalidRuleException
      */
     public function testValidateWithViolations(): void
@@ -105,8 +95,6 @@ class AbstractValidatedRequestTest extends TestCase
     }
 
     /**
-     * @covers ::validate
-     * @covers ::isValid
      * @throws Exception
      */
     public function testValidateWithoutValidationRules(): void
@@ -124,8 +112,6 @@ class AbstractValidatedRequestTest extends TestCase
     }
 
     /**
-     * @covers ::validate
-     * @covers ::isValid
      * @throws Exception
      */
     public function testValidateWithCustomValidation(): void

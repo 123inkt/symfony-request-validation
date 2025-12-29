@@ -4,19 +4,15 @@ declare(strict_types=1);
 namespace DigitalRevolution\SymfonyRequestValidation\Tests\Unit\Constraint;
 
 use DigitalRevolution\SymfonyRequestValidation\Constraint\RequestConstraint;
+use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Validator\Constraints\IsNull;
 use Symfony\Component\Validator\Constraints\NotBlank;
 use Symfony\Component\Validator\Constraints\NotNull;
 
-/**
- * @coversDefaultClass \DigitalRevolution\SymfonyRequestValidation\Constraint\RequestConstraint
- */
+#[CoversClass(RequestConstraint::class)]
 class RequestConstraintTest extends TestCase
 {
-    /**
-     * @covers ::__construct
-     */
     public function testConstructDefaultOptions(): void
     {
         $constraint = new RequestConstraint();
@@ -26,9 +22,6 @@ class RequestConstraintTest extends TestCase
         static::assertFalse($constraint->allowExtraFields);
     }
 
-    /**
-     * @covers ::__construct
-     */
     public function testConstructConstraintOptions(): void
     {
         $constraintA = new NotBlank();

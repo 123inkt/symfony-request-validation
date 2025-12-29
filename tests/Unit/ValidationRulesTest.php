@@ -5,19 +5,14 @@ namespace DigitalRevolution\SymfonyRequestValidation\Tests\Unit;
 
 use DigitalRevolution\SymfonyRequestValidation\ValidationRules;
 use InvalidArgumentException;
+use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Validator\Constraints\NotBlank;
 use Symfony\Component\Validator\Constraints\Required;
 
-/**
- * @coversDefaultClass \DigitalRevolution\SymfonyRequestValidation\ValidationRules
- */
+#[CoversClass(ValidationRules::class)]
 class ValidationRulesTest extends TestCase
 {
-    /**
-     * @covers ::__construct
-     * @covers ::getDefinitions
-     */
     public function testConstructorAndGetters(): void
     {
         $definitions = ['query' => new NotBlank()];
@@ -25,10 +20,6 @@ class ValidationRulesTest extends TestCase
         static::assertSame($definitions, $rules->getDefinitions());
     }
 
-    /**
-     * @covers ::__construct
-     * @covers ::getDefinitions
-     */
     public function testConstructorArrayOfConstraints(): void
     {
         $definitions = ['query' => [new Required(), new NotBlank()]];
@@ -36,18 +27,12 @@ class ValidationRulesTest extends TestCase
         static::assertSame($definitions, $rules->getDefinitions());
     }
 
-    /**
-     * @covers ::__construct
-     */
     public function testInvalidPropertyArgument(): void
     {
         $this->expectException(InvalidArgumentException::class);
         new ValidationRules(['query' => 'a', 'b']);
     }
 
-    /**
-     * @covers ::getAllowExtraFields
-     */
     public function testGetAllowExtraFields(): void
     {
         $rules = new ValidationRules(['query' => 'a']);

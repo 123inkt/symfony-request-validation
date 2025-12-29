@@ -8,17 +8,14 @@ use DigitalRevolution\SymfonyRequestValidation\Constraint\RequestConstraintFacto
 use DigitalRevolution\SymfonyRequestValidation\ValidationRules;
 use DigitalRevolution\SymfonyValidationShorthand\ConstraintFactory;
 use DigitalRevolution\SymfonyValidationShorthand\Rule\InvalidRuleException;
+use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Validator\Constraints as Assert;
 
-/**
- * @coversDefaultClass \DigitalRevolution\SymfonyRequestValidation\Constraint\RequestConstraintFactory
- * @covers ::__construct
- */
+#[CoversClass(RequestConstraintFactory::class)]
 class RequestConstraintFactoryTest extends TestCase
 {
     /**
-     * @covers ::createConstraint
      * @throws InvalidRuleException
      */
     public function testCreateRequestConstraint(): void
@@ -36,7 +33,6 @@ class RequestConstraintFactoryTest extends TestCase
     }
 
     /**
-     * @covers ::createConstraint
      * @throws InvalidRuleException
      */
     public function testCreateRequestConstraintAllowExtraFields(): void
