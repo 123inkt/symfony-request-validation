@@ -6,24 +6,24 @@ namespace DigitalRevolution\SymfonyRequestValidation\Test;
 
 use DigitalRevolution\SymfonyRequestValidation\AbstractValidatedRequest;
 use DigitalRevolution\SymfonyRequestValidation\Constraint\RequestConstraintFactory;
-use DigitalRevolution\SymfonyValidationShorthand\Rule\InvalidRuleException;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\Validator\Validation;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
+use Throwable;
 
 /**
- * @codeCoverageIgnore Test purposely only
+ * @codeCoverageIgnore For test purposes only
  */
 trait AbstractValidatedRequestTrait
 {
     /**
      * @template V of AbstractValidatedRequest
-     * @param class-string<V>                                                         $classString
-     * @param callable(RequestStack, ValidatorInterface, RequestConstraintFactory): V $constructor
+     * @param class-string<V>                                                                $classString
+     * @param (callable(RequestStack, ValidatorInterface, RequestConstraintFactory): V)|null $constructor
      *
      * @return V
-     * @throws InvalidRuleException
+     * @throws Throwable
      */
     final protected static function createValidatedRequest(
         string $classString,

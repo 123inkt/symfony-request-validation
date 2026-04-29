@@ -7,7 +7,7 @@ namespace DigitalRevolution\SymfonyRequestValidation\Test;
 use PHPUnit\Framework\TestCase;
 
 /**
- * @codeCoverageIgnore Test purposely only
+ * @codeCoverageIgnore For test purposes only
  */
 abstract class AbstractValidatedRequestTestCase extends TestCase
 {
