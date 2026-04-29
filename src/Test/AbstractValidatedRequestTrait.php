@@ -30,24 +30,17 @@ trait AbstractValidatedRequestTrait
         ?Request $request = null,
         ?ValidatorInterface $validator = null,
         ?RequestConstraintFactory $constraintFactory = null,
-        ?callable $constructor = null,
+        mixed ...$arguments
     ): AbstractValidatedRequest {
         $stack = new RequestStack();
         $stack->push($request ?? new Request());
 
-        if ($constructor === null) {
-            $validatedRequest = new $classString(
-                $stack,
-                $validator ?? Validation::createValidator(),
-                $constraintFactory ?? new RequestConstraintFactory(),
-            );
-        } else {
-            $validatedRequest = $constructor(
-                $stack,
-                $validator ?? Validation::createValidator(),
-                $constraintFactory ?? new RequestConstraintFactory(),
-            );
-        }
+        $validatedRequest = new $classString(
+            $stack,
+            $validator ?? Validation::createValidator(),
+            $constraintFactory ?? new RequestConstraintFactory(),
+            ...$arguments
+        );
         $validatedRequest->validate();
 
         return $validatedRequest;
