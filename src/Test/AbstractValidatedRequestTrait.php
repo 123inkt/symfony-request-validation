@@ -20,7 +20,6 @@ trait AbstractValidatedRequestTrait
     /**
      * @template V of AbstractValidatedRequest
      * @param class-string<V>                                                                $classString
-     * @param (callable(RequestStack, ValidatorInterface, RequestConstraintFactory): V)|null $constructor
      *
      * @return V
      * @throws Throwable
