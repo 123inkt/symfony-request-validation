@@ -31,8 +31,11 @@ trait AbstractValidatedRequestTrait
         ?RequestConstraintFactory $constraintFactory = null,
         mixed ...$arguments
     ): AbstractValidatedRequest {
+        $requestStack = new RequestStack();
+        $requestStack->push($request ?? new Request());
+
         return new $classString(
-            new RequestStack([$request ?? new Request()]),
+            $requestStack,
             $validator ?? Validation::createValidator(),
             $constraintFactory ?? new RequestConstraintFactory(),
             ...$arguments
