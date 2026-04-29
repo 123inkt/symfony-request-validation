@@ -19,7 +19,7 @@ trait AbstractValidatedRequestTrait
 {
     /**
      * @template V of AbstractValidatedRequest
-     * @param class-string<V>                                                                $classString
+     * @param class-string<V> $classString
      *
      * @return V
      * @throws Throwable
